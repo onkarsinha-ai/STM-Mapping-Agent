@@ -9,7 +9,7 @@ pydantic-settings==2.1.0
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
-cryptography==42.0.0
+cryptography>=3.1.0,<42.0.0
 litellm==1.18.0
 pandas==2.1.4
 pyarrow==14.0.2
