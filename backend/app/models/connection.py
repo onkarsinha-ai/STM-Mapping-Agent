@@ -30,7 +30,7 @@ class Connection(Base):
     connection_type = Column(Enum(ConnectionType), nullable=False)
     db_type = Column(Enum(DBType), nullable=True)
     encrypted_connection_string = Column(Text, nullable=False)
-    metadata = Column(JSON, default=dict)
+    connection_metadata = Column("metadata", JSON, default=dict)
     is_tested = Column(Boolean, default=False)
     last_tested_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
