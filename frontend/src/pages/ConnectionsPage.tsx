@@ -13,7 +13,7 @@ export function ConnectionsPage() {
     <div>
       <h2 className="text-2xl font-bold mb-6">Connections</h2>
       <ConnectionForm onSuccess={handleSuccess} />
-      <ConnectionList onDelete={handleSuccess} />
+      <ConnectionList onDelete={handleSuccess} onEdit={(conn) => console.log('Edit', conn)} />
     </div>
   )
 }
