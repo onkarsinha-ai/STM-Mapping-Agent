@@ -3,6 +3,7 @@ export interface Connection {
   name: string
   connection_type: 'source' | 'target' | 'jira' | 'llm'
   db_type: string | null
+  provider: string | null
   is_tested: boolean
 }
 
