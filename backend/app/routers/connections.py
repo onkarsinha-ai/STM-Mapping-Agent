@@ -1,4 +1,7 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
@@ -20,7 +23,11 @@ async def list_connections(db: AsyncSession = Depends(get_db)):
 
 @router.post("/test", response_model=ConnectionTestResponse)
 async def test_connection(request: ConnectionTestRequest):
-    result = await ConnectionService.test_connection(request.params)
+    result = await ConnectionService.test_connection(
+        request.connection_type,
+        request.provider,
+        request.params
+    )
     return ConnectionTestResponse(success=result.success, message=result.message)
 
 
@@ -33,6 +40,7 @@ async def create_connection(data: ConnectionCreate, db: AsyncSession = Depends(g
         name=data.name,
         connection_type=data.connection_type,
         db_type=data.db_type,
+        provider=data.provider,
         params=data.params
     )
     return conn
@@ -46,3 +54,60 @@ async def delete_connection(connection_id: str, db: AsyncSession = Depends(get_d
     await db.delete(conn)
     await db.commit()
     return {"message": "Connection deleted"}
+
+
+def _oauth_response_html(message: dict) -> str:
+    """Build HTML that safely postMessages a JSON object to the parent window."""
+    payload = json.dumps(message)
+    return f"""<!DOCTYPE html>
+<html>
+<body>
+<script>
+    window.opener.postMessage({payload}, '*');
+    window.close();
+</script>
+</body>
+</html>"""
+
+
+@router.get("/jira/callback")
+async def jira_oauth_callback(code: str, state: str):
+    """Handle Jira Cloud OAuth 2.0 callback."""
+    import httpx
+
+    try:
+        import base64
+        state_data = json.loads(base64.b64decode(state).decode())
+        client_id = state_data.get("client_id")
+        client_secret = state_data.get("client_secret")
+        redirect_uri = state_data.get("redirect_uri", "http://localhost:8000/connections/jira/callback")
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://auth.atlassian.com/oauth/token",
+                json={
+                    "grant_type": "authorization_code",
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "code": code,
+                    "redirect_uri": redirect_uri
+                }
+            )
+
+            if response.status_code == 200:
+                token_data = response.json()
+                return HTMLResponse(content=_oauth_response_html({
+                    "type": "jira_oauth_success",
+                    "access_token": token_data.get("access_token"),
+                    "refresh_token": token_data.get("refresh_token")
+                }))
+            else:
+                return HTMLResponse(content=_oauth_response_html({
+                    "type": "jira_oauth_error",
+                    "error": f"Token exchange failed: {response.text}"
+                }))
+    except Exception as e:
+        return HTMLResponse(content=_oauth_response_html({
+            "type": "jira_oauth_error",
+            "error": f"Callback error: {str(e)}"
+        }))

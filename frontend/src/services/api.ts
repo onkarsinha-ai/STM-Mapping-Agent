@@ -16,7 +16,8 @@ export const connectionsApi = {
   list: () => api.get('/connections/'),
   create: (data: any) => api.post('/connections/', data),
   test: (data: any) => api.post('/connections/test', data),
-  delete: (id: string) => api.delete(`/connections/${id}`)
+  delete: (id: string) => api.delete(`/connections/${id}`),
+  get: (id: string) => api.get(`/connections/${id}`)
 }
 
 // Project APIs
