@@ -1,0 +1,76 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - heading "STM Agent" [level=1] [ref=e6]
+    - navigation [ref=e7]:
+      - link "Projects" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+        - text: Projects
+      - link "Connections" [ref=e11] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e12]
+        - text: Connections
+    - link "New Project" [ref=e17] [cursor=pointer]:
+      - /url: /
+      - img [ref=e18]
+      - text: New Project
+  - generic [ref=e19]:
+    - banner [ref=e20]:
+      - generic [ref=e21]: STM Mapping Agent v0.1
+      - generic [ref=e22]: Local Mode
+    - main [ref=e23]:
+      - generic [ref=e24]:
+        - heading "Connections" [level=2] [ref=e25]
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - button "Database" [ref=e28] [cursor=pointer]:
+              - img [ref=e29]
+              - text: Database
+            - button "LLM Model" [ref=e33] [cursor=pointer]:
+              - img [ref=e34]
+              - text: LLM Model
+            - button "Jira" [active] [ref=e36] [cursor=pointer]:
+              - img [ref=e37]
+              - text: Jira
+          - generic [ref=e141]:
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - generic [ref=e145]: Connection Name *
+                - textbox "Production Postgres" [ref=e146]
+              - generic [ref=e147]:
+                - generic [ref=e148]: Description
+                - textbox "Optional description" [ref=e149]
+            - generic [ref=e150]:
+              - generic [ref=e151]: Instance Type *
+              - generic [ref=e152]:
+                - button "Jira Cloud" [ref=e153] [cursor=pointer]
+                - button "Jira Server / DC" [ref=e154] [cursor=pointer]
+            - generic [ref=e155]:
+              - generic [ref=e156]: Base URL *
+              - textbox "https://your-domain.atlassian.net" [ref=e157]
+            - generic [ref=e158]:
+              - generic [ref=e159]: Project Key(s)
+              - textbox "PROJ, DEV, DATA" [ref=e160]
+            - generic [ref=e161]:
+              - generic [ref=e162]: Auth Method *
+              - combobox [ref=e163]:
+                - option "Basic Auth (Email + API Token)" [selected]
+                - option "OAuth 2.0"
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - generic [ref=e166]: Email *
+                - textbox [ref=e167]
+              - generic [ref=e168]:
+                - generic [ref=e169]: API Token *
+                - textbox [ref=e170]
+            - generic [ref=e171]:
+              - button "Test Connection" [ref=e172] [cursor=pointer]:
+                - img [ref=e173]
+                - text: Test Connection
+              - button "Save Connection" [disabled] [ref=e175]:
+                - img [ref=e176]
+                - text: Save Connection
+        - generic [ref=e98]:
+          - img [ref=e101]
+          - heading "No connections yet" [level=3] [ref=e104]
+          - paragraph [ref=e105]: Add your first database, LLM, or Jira connection to start building mapping projects.
