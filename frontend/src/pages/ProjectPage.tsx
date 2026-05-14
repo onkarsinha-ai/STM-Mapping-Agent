@@ -1,15 +1,23 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { projectsApi, discoveryApi } from '../services/api'
 import { SchemaBrowser } from '../components/schema/SchemaBrowser'
 import { MappingTable } from '../components/mappings/MappingTable'
+import { ArrowLeft, FolderOpen, Play } from 'lucide-react'
 
 const PHASES = ['input', 'discovery', 'propose', 'review', 'export']
+const PHASE_LABELS: Record<string, string> = {
+  input: 'Configure',
+  discovery: 'Discovery',
+  propose: 'Propose',
+  review: 'Review',
+  export: 'Export'
+}
 
 export function ProjectPage() {
   const { id } = useParams<{ id: string }>()
 
-  const { data: projectData } = useQuery({
+  const { data: projectData, isLoading: projectLoading } = useQuery({
     queryKey: ['project', id],
     queryFn: () => projectsApi.get(id!)
   })
@@ -30,34 +38,107 @@ export function ProjectPage() {
     window.location.reload()
   }
 
+  if (projectLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="flex items-center gap-3" style={{ color: 'var(--text-muted)' }}>
+          <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          Loading project...
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div>
+    <div className="animate-slide-up max-w-6xl mx-auto">
+      {/* Back + Title */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold">{project?.name}</h2>
-        <p className="text-gray-500">{project?.description}</p>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-sm mb-4 transition-colors"
+          style={{ color: 'var(--text-muted)' }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+        >
+          <ArrowLeft size={14} />
+          Back to Projects
+        </Link>
+        <div className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: 'var(--accent-soft)' }}
+          >
+            <FolderOpen size={20} style={{ color: 'var(--accent)' }} />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+              {project?.name}
+            </h2>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              {project?.description || 'No description'}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Phase Stepper */}
-      <div className="flex items-center gap-2 mb-8">
-        {PHASES.map((p, i) => (
-          <div key={p} className="flex items-center gap-2">
-            <div className={`px-3 py-1 rounded-full text-sm capitalize ${
-              p === phase ? 'bg-blue-600 text-white' :
-              phaseIndex > i ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-            }`}>
-              {p}
-            </div>
-            {i < 4 && <div className="w-8 h-px bg-gray-300" />}
-          </div>
-        ))}
+      <div className="card p-5 mb-8">
+        <div className="flex items-center justify-center">
+          {PHASES.map((p, i) => {
+            const isCompleted = phaseIndex > i
+            const isCurrent = p === phase
+
+            return (
+              <div key={p} className="flex items-center">
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`phase-step ${isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'}`}
+                  >
+                    {isCompleted ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <span>{i + 1}</span>
+                    )}
+                  </div>
+                  <span
+                    className="text-xs font-medium capitalize"
+                    style={{
+                      color: isCurrent ? 'var(--accent)' : isCompleted ? 'var(--success)' : 'var(--text-muted)'
+                    }}
+                  >
+                    {PHASE_LABELS[p]}
+                  </span>
+                </div>
+                {i < 4 && (
+                  <div
+                    className={`phase-connector mx-2 ${isCompleted ? 'active' : ''}`}
+                  />
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
 
+      {/* Phase Content */}
       {phase === 'input' && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold mb-4">Ready to Discover</h3>
-          <p className="text-gray-600 mb-4">Source and target connections are configured. Click below to start schema discovery.</p>
-          <button onClick={handleDiscover}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+        <div className="card p-8 text-center">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: 'var(--accent-soft)' }}
+          >
+            <Play size={28} style={{ color: 'var(--accent)' }} />
+          </div>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Ready to Discover
+          </h3>
+          <p className="text-sm max-w-md mx-auto mb-6" style={{ color: 'var(--text-muted)' }}>
+            Source and target connections are configured. Click below to start schema discovery and let the LLM analyze your database structure.
+          </p>
+          <button onClick={handleDiscover} className="btn-primary animate-pulse-glow">
+            <Play size={16} />
             Start Discovery
           </button>
         </div>
@@ -65,21 +146,42 @@ export function ProjectPage() {
 
       {phase === 'discovery' && (
         <div>
-          <h3 className="text-lg font-semibold mb-4">Schema Discovery</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Schema Discovery
+            </h3>
+            <span className="badge" style={{ backgroundColor: 'var(--cyan-soft)', color: 'var(--cyan)' }}>
+              Live
+            </span>
+          </div>
           <SchemaBrowser schema={schema} />
         </div>
       )}
 
       {(phase === 'propose' || phase === 'review') && (
         <div>
-          <h3 className="text-lg font-semibold mb-4">Review Mappings</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Review Mappings
+            </h3>
+            <span className="badge" style={{ backgroundColor: 'var(--warning-soft)', color: 'var(--warning)' }}>
+              Review Required
+            </span>
+          </div>
           <MappingTable projectId={id!} />
         </div>
       )}
 
       {phase === 'export' && (
         <div>
-          <h3 className="text-lg font-semibold mb-4">Export</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Export Mappings
+            </h3>
+            <span className="badge" style={{ backgroundColor: 'var(--success-soft)', color: 'var(--success)' }}>
+              Ready
+            </span>
+          </div>
           <MappingTable projectId={id!} />
         </div>
       )}

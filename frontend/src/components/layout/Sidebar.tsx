@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Database, FolderKanban, Plus } from 'lucide-react'
+import { Database, FolderKanban, Plus, GitBranch } from 'lucide-react'
 
 export function Sidebar() {
   const location = useLocation()
@@ -9,25 +9,53 @@ export function Sidebar() {
     { path: '/connections', label: 'Connections', icon: Database },
   ]
 
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/'
+    return location.pathname.startsWith(path)
+  }
+
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h1 className="text-lg font-bold text-gray-900">STM Agent</h1>
+    <aside
+      className="w-64 flex flex-col border-r"
+      style={{
+        backgroundColor: 'var(--bg-surface)',
+        borderColor: 'var(--border-subtle)'
+      }}
+    >
+      {/* Logo */}
+      <div
+        className="px-5 py-4 border-b flex items-center gap-3"
+        style={{ borderColor: 'var(--border-subtle)' }}
+      >
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: 'var(--accent-soft)' }}
+        >
+          <GitBranch size={18} style={{ color: 'var(--accent)' }} />
+        </div>
+        <div>
+          <h1 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+            STM Agent
+          </h1>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            Mapping Engine
+          </p>
+        </div>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 p-3 space-y-1">
+        <div className="px-3 py-2 text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+          Workspace
+        </div>
         {navItems.map(item => {
           const Icon = item.icon
-          const isActive = location.pathname === item.path
+          const active = isActive(item.path)
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium ${
-                isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`nav-item ${active ? 'active' : ''}`}
             >
               <Icon size={18} />
               {item.label}
@@ -36,12 +64,16 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
+      {/* New Project CTA */}
+      <div
+        className="p-3 border-t"
+        style={{ borderColor: 'var(--border-subtle)' }}
+      >
         <Link
           to="/"
-          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+          className="btn-primary w-full justify-center"
         >
-          <Plus size={18} />
+          <Plus size={16} />
           New Project
         </Link>
       </div>

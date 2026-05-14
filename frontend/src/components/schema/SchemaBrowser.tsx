@@ -1,8 +1,22 @@
 import { useState } from 'react'
-import { ChevronRight, ChevronDown, Table, Columns } from 'lucide-react'
+import { ChevronRight, ChevronDown, Table2, Columns, Key, Hash, Type } from 'lucide-react'
+
+interface Column {
+  name: string
+  type: string
+  nullable: boolean
+}
 
 interface SchemaBrowserProps {
-  schema: Record<string, Record<string, Array<{name: string, type: string, nullable: boolean}>>>
+  schema: Record<string, Record<string, Column[]>>
+}
+
+function getTypeIcon(type: string) {
+  const t = type.toLowerCase()
+  if (t.includes('int') || t.includes('serial')) return <Hash size={12} />
+  if (t.includes('char') || t.includes('text') || t.includes('varchar')) return <Type size={12} />
+  if (t.includes('key') || t.includes('uuid') || t.includes('id')) return <Key size={12} />
+  return <Columns size={12} />
 }
 
 export function SchemaBrowser({ schema }: SchemaBrowserProps) {
@@ -23,40 +37,112 @@ export function SchemaBrowser({ schema }: SchemaBrowserProps) {
     setExpandedTables(next)
   }
 
+  const schemaEntries = Object.entries(schema)
+
+  if (schemaEntries.length === 0) {
+    return (
+      <div className="card p-8 text-center">
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+          style={{ backgroundColor: 'var(--accent-soft)' }}
+        >
+          <Table2 size={28} style={{ color: 'var(--accent)' }} />
+        </div>
+        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+          No schema data
+        </h3>
+        <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>
+          Run schema discovery to populate this view with your database structure.
+        </p>
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      {Object.entries(schema).map(([schemaName, tables]) => (
-        <div key={schemaName} className="border-b border-gray-100 last:border-0">
+    <div className="card overflow-hidden">
+      {schemaEntries.map(([schemaName, tables]) => (
+        <div key={schemaName}>
           <button
             onClick={() => toggleSchema(schemaName)}
-            className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-left"
+            className="w-full flex items-center gap-2 px-5 py-3 text-left transition-colors hover:bg-white/5"
+            style={{ borderBottom: '1px solid var(--border-subtle)' }}
           >
-            {expandedSchemas.has(schemaName) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-            <span className="font-medium text-gray-700">{schemaName}</span>
+            {expandedSchemas.has(schemaName) ? (
+              <ChevronDown size={16} style={{ color: 'var(--text-muted)' }} />
+            ) : (
+              <ChevronRight size={16} style={{ color: 'var(--text-muted)' }} />
+            )}
+            <span className="schema-node font-semibold" style={{ color: 'var(--accent)' }}>
+              {schemaName}
+            </span>
+            <span className="text-xs ml-1" style={{ color: 'var(--text-muted)' }}>
+              ({Object.keys(tables).length} tables)
+            </span>
           </button>
 
           {expandedSchemas.has(schemaName) && (
-            <div className="pl-8">
+            <div>
               {Object.entries(tables).map(([tableName, columns]) => (
                 <div key={tableName}>
                   <button
                     onClick={() => toggleTable(`${schemaName}.${tableName}`)}
-                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-left"
+                    className="w-full flex items-center gap-2 px-5 py-2.5 text-left transition-colors hover:bg-white/5"
+                    style={{
+                      paddingLeft: '2.5rem',
+                      borderBottom: '1px solid var(--border-subtle)'
+                    }}
                   >
-                    {expandedTables.has(`${schemaName}.${tableName}`) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    <Table size={16} className="text-blue-600" />
-                    <span className="text-gray-700">{tableName}</span>
-                    <span className="text-xs text-gray-400">({columns.length} columns)</span>
+                    {expandedTables.has(`${schemaName}.${tableName}`) ? (
+                      <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />
+                    ) : (
+                      <ChevronRight size={14} style={{ color: 'var(--text-muted)' }} />
+                    )}
+                    <Table2 size={16} style={{ color: 'var(--cyan)' }} />
+                    <span className="schema-node" style={{ color: 'var(--text-primary)' }}>
+                      {tableName}
+                    </span>
+                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      ({columns.length} columns)
+                    </span>
                   </button>
 
                   {expandedTables.has(`${schemaName}.${tableName}`) && (
-                    <div className="pl-8">
-                      {columns.map(col => (
-                        <div key={col.name} className="flex items-center gap-2 px-4 py-1 text-sm">
-                          <Columns size={14} className="text-gray-400" />
-                          <span className="text-gray-700">{col.name}</span>
-                          <span className="text-xs text-gray-400">{col.type}</span>
-                          {col.nullable && <span className="text-xs text-orange-400">nullable</span>}
+                    <div style={{ paddingLeft: '3.5rem' }}>
+                      {columns.map((col) => (
+                        <div
+                          key={col.name}
+                          className="flex items-center gap-2.5 px-5 py-2 transition-colors hover:bg-white/5"
+                          style={{
+                            borderBottom: '1px solid var(--border-subtle)',
+                            paddingLeft: '1rem'
+                          }}
+                        >
+                          <span style={{ color: 'var(--text-muted)' }}>
+                            {getTypeIcon(col.type)}
+                          </span>
+                          <span className="schema-node" style={{ color: 'var(--text-secondary)' }}>
+                            {col.name}
+                          </span>
+                          <span
+                            className="schema-node text-xs px-1.5 py-0.5 rounded"
+                            style={{
+                              backgroundColor: 'var(--bg-elevated)',
+                              color: 'var(--cyan)'
+                            }}
+                          >
+                            {col.type}
+                          </span>
+                          {col.nullable && (
+                            <span
+                              className="text-xs px-1.5 py-0.5 rounded"
+                              style={{
+                                backgroundColor: 'var(--warning-soft)',
+                                color: 'var(--warning)'
+                              }}
+                            >
+                              nullable
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>
