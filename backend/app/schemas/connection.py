@@ -8,6 +8,7 @@ class ConnectionCreate(BaseModel):
     name: str
     connection_type: ConnectionType
     db_type: Optional[DBType] = None
+    provider: Optional[str] = None
     params: Dict[str, Any]
 
 
@@ -16,6 +17,7 @@ class ConnectionResponse(BaseModel):
     name: str
     connection_type: str
     db_type: Optional[str]
+    provider: Optional[str]
     is_tested: bool
 
     class Config:
@@ -23,7 +25,9 @@ class ConnectionResponse(BaseModel):
 
 
 class ConnectionTestRequest(BaseModel):
-    db_type: DBType
+    connection_type: str
+    provider: Optional[str] = None
+    db_type: Optional[DBType] = None
     params: Dict[str, Any]
 
 
