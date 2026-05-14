@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { projectsApi, connectionsApi } from '../../services/api'
+import { Database, Sparkles, Link2, Hash, Loader2 } from 'lucide-react'
 
 export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   const [name, setName] = useState('')
@@ -37,34 +38,77 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
       onCreated()
       setName('')
       setDescription('')
+      setSourceId('')
+      setTargetId('')
+      setLlmId('')
+      setJiraKey('')
     } catch (e: any) {
       alert(e.response?.data?.detail || 'Failed to create project')
     }
     setCreating(false)
   }
 
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-      <h3 className="text-lg font-semibold mb-4">New Mapping Project</h3>
+  const inputGrid = 'grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
-          <input type="text" value={name} onChange={e => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Customer DWH Mapping" />
+  return (
+    <div className="card p-6 animate-slide-up">
+      <div className="flex items-center gap-3 mb-6">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: 'var(--accent-soft)' }}
+        >
+          <Sparkles size={18} style={{ color: 'var(--accent)' }} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <input type="text" value={description} onChange={e => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+          <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+            New Mapping Project
+          </h3>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            Configure source, target, and LLM connections
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className={inputGrid}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Source Connection</label>
-          <select value={sourceId} onChange={e => setSourceId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md">
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            Project Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            className="input-dark w-full"
+            placeholder="Customer DWH Mapping"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            Description
+          </label>
+          <input
+            type="text"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            className="input-dark w-full"
+            placeholder="Brief description..."
+          />
+        </div>
+      </div>
+
+      <div className={inputGrid}>
+        <div>
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            <span className="inline-flex items-center gap-1.5">
+              <Database size={14} style={{ color: 'var(--cyan)' }} />
+              Source Connection
+            </span>
+          </label>
+          <select
+            value={sourceId}
+            onChange={e => setSourceId(e.target.value)}
+            className="input-dark w-full"
+          >
             <option value="">Select source...</option>
             {sourceConnections.map((c: any) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -72,9 +116,17 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Target Connection</label>
-          <select value={targetId} onChange={e => setTargetId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md">
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            <span className="inline-flex items-center gap-1.5">
+              <Database size={14} style={{ color: 'var(--success)' }} />
+              Target Connection
+            </span>
+          </label>
+          <select
+            value={targetId}
+            onChange={e => setTargetId(e.target.value)}
+            className="input-dark w-full"
+          >
             <option value="">Select target...</option>
             {targetConnections.map((c: any) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -83,11 +135,19 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className={inputGrid}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">LLM Connection</label>
-          <select value={llmId} onChange={e => setLlmId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md">
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            <span className="inline-flex items-center gap-1.5">
+              <Sparkles size={14} style={{ color: 'var(--accent)' }} />
+              LLM Connection
+            </span>
+          </label>
+          <select
+            value={llmId}
+            onChange={e => setLlmId(e.target.value)}
+            className="input-dark w-full"
+          >
             <option value="">Select LLM...</option>
             {llmConnections.map((c: any) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -95,16 +155,41 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Jira Ticket (optional)</label>
-          <input type="text" value={jiraKey} onChange={e => setJiraKey(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="PROJ-123" />
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+            <span className="inline-flex items-center gap-1.5">
+              <Hash size={14} style={{ color: 'var(--warning)' }} />
+              Jira Ticket (optional)
+            </span>
+          </label>
+          <input
+            type="text"
+            value={jiraKey}
+            onChange={e => setJiraKey(e.target.value)}
+            className="input-dark w-full"
+            placeholder="PROJ-123"
+          />
         </div>
       </div>
 
-      <button onClick={handleCreate} disabled={creating || !name}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
-        {creating ? 'Creating...' : 'Create Project'}
-      </button>
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={handleCreate}
+          disabled={creating || !name}
+          className="btn-primary"
+        >
+          {creating ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Creating...
+            </>
+          ) : (
+            <>
+              <Link2 size={16} />
+              Create Project
+            </>
+          )}
+        </button>
+      </div>
     </div>
   )
 }

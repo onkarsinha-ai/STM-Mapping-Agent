@@ -1,0 +1,53 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - heading "STM Agent" [level=1] [ref=e6]
+    - navigation [ref=e7]:
+      - link "Projects" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+        - text: Projects
+      - link "Connections" [ref=e11] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e12]
+        - text: Connections
+    - link "New Project" [ref=e17] [cursor=pointer]:
+      - /url: /
+      - img [ref=e18]
+      - text: New Project
+  - generic [ref=e19]:
+    - banner [ref=e20]:
+      - generic [ref=e21]: STM Mapping Agent v0.1
+      - generic [ref=e22]: Local Mode
+    - main [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e44]:
+          - heading "Test Mapping Project" [level=2] [ref=e45]
+          - paragraph [ref=e46]: Demo project for STM mapping
+        - generic [ref=e25]:
+          - generic [ref=e27]: input
+          - generic [ref=e30]: discovery
+          - generic [ref=e33]: propose
+          - generic [ref=e36]: review
+          - generic [ref=e39]: export
+        - generic [ref=e47]:
+          - heading "Review Mappings" [level=3] [ref=e48]
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]:
+                - button "all (0)" [ref=e52] [cursor=pointer]
+                - button "proposed (0)" [ref=e53] [cursor=pointer]
+                - button "approved (0)" [ref=e54] [cursor=pointer]
+                - button "rejected (0)" [ref=e55] [cursor=pointer]
+              - button "Export Excel" [ref=e56] [cursor=pointer]:
+                - img [ref=e57]
+                - text: Export Excel
+            - table [ref=e61]:
+              - rowgroup [ref=e62]:
+                - row "Target Source Business Logic Confidence Status Actions" [ref=e63]:
+                  - columnheader "Target" [ref=e64]
+                  - columnheader "Source" [ref=e65]
+                  - columnheader "Business Logic" [ref=e66]
+                  - columnheader "Confidence" [ref=e67]
+                  - columnheader "Status" [ref=e68]
+                  - columnheader "Actions" [ref=e69]
+              - rowgroup
