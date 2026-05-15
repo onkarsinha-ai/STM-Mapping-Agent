@@ -27,8 +27,15 @@ class LLMTester:
                 litellm_model = f"groq/{model}"
             elif provider == "cohere":
                 litellm_model = f"cohere/{model}"
+            elif provider == "gemini":
+                litellm_model = f"gemini/{model}"
             elif provider == "kimi":
-                litellm_model = f"openai/{model}"
+                # Custom endpoint → use OpenAI-compatible client
+                # Default endpoint → use litellm's native Moonshot provider
+                if base_url:
+                    litellm_model = f"openai/{model}"
+                else:
+                    litellm_model = f"moonshot/{model}"
             else:
                 litellm_model = model
 
@@ -48,6 +55,6 @@ class LLMTester:
             response = await litellm.acompletion(**completion_params)
             content = response.choices[0].message.content
 
-            return ConnectionTestResult(True, f"LLM connection successful. Response: {content.strip()}")
+            return ConnectionTestResult(True, "Connected successfully")
         except Exception as e:
             return ConnectionTestResult(False, f"LLM test failed: {str(e)}")

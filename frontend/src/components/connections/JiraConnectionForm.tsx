@@ -30,6 +30,14 @@ export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
     setParams(prev => ({ ...prev, [key]: value }))
   }
 
+  const getErrorMessage = (e: any): string => {
+    const detail = e.response?.data?.detail
+    if (typeof detail === 'string') return detail
+    if (Array.isArray(detail)) return detail.map((d: any) => d.msg || String(d)).join(', ')
+    if (detail) return JSON.stringify(detail)
+    return e.message || 'Request failed'
+  }
+
   useEffect(() => {
     const defaultUrl = instanceType === 'jira_cloud'
       ? 'https://your-domain.atlassian.net'
@@ -80,7 +88,7 @@ export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
       })
       setTestResult(res.data)
     } catch (e: any) {
-      setTestResult({ success: false, message: e.response?.data?.detail || 'Test failed' })
+      setTestResult({ success: false, message: getErrorMessage(e) })
     }
     setTesting(false)
   }
@@ -99,7 +107,7 @@ export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
       setDescription('')
       setTestResult(null)
     } catch (e: any) {
-      alert(e.response?.data?.detail || 'Save failed')
+      alert(getErrorMessage(e))
     }
     setSaving(false)
   }
@@ -279,19 +287,21 @@ export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
 
       {testResult && (
         <div
-          className="p-3 rounded-lg flex items-center gap-2 text-sm"
+          className="p-3 rounded-lg flex items-start gap-2 text-sm"
           style={{
             backgroundColor: testResult.success ? 'var(--success-soft)' : 'var(--error-soft)',
             color: testResult.success ? 'var(--success)' : 'var(--error)'
           }}
         >
-          {testResult.success ? <CheckCircle size={16} /> : <XCircle size={16} />}
-          {testResult.message}
+          <span className="mt-0.5 shrink-0">
+            {testResult.success ? <CheckCircle size={16} /> : <XCircle size={16} />}
+          </span>
+          <span className="break-words">{testResult.message}</span>
         </div>
       )}
 
       <div className="flex gap-3">
-        <button onClick={handleTest} disabled={testing} className="btn-secondary">
+        <button type="button" onClick={handleTest} disabled={testing} className="btn-secondary">
           {testing ? (
             <><Loader2 size={16} className="animate-spin" /> Testing...</>
           ) : (
@@ -299,6 +309,7 @@ export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
           )}
         </button>
         <button
+          type="button"
           onClick={handleSave}
           disabled={saving || !testResult?.success || !name}
           className="btn-primary"

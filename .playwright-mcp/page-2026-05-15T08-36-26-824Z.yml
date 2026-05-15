@@ -1,0 +1,94 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e44]
+            - generic [ref=e48]:
+              - heading "Connections" [level=2] [ref=e49]
+              - paragraph [ref=e50]: Manage database, LLM, and Jira connections
+          - button "Cancel" [ref=e61] [cursor=pointer]:
+            - img [ref=e52]
+            - text: Cancel
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - button "Database" [ref=e65] [cursor=pointer]:
+              - img [ref=e66]
+              - text: Database
+            - button "LLM Model" [active] [ref=e70] [cursor=pointer]:
+              - img [ref=e71]
+              - text: LLM Model
+            - button "Jira" [ref=e73] [cursor=pointer]:
+              - img [ref=e74]
+              - text: Jira
+          - generic [ref=e135]:
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - generic [ref=e139]: Connection Name *
+                - textbox "Production Postgres" [ref=e140]
+              - generic [ref=e141]:
+                - generic [ref=e142]: Description
+                - textbox "Optional description" [ref=e143]
+            - generic [ref=e144]:
+              - generic [ref=e145]: Provider *
+              - combobox [ref=e146]:
+                - option "OpenAI"
+                - option "Anthropic"
+                - option "Azure OpenAI"
+                - option "Local / Self-Hosted"
+                - option "Ollama"
+                - option "Groq"
+                - option "Cohere"
+                - option "Kimi (Moonshot AI)" [selected]
+            - generic [ref=e148]:
+              - generic [ref=e149]: Model *
+              - combobox [ref=e150]:
+                - option "kimi-k2" [selected]
+                - option "kimi-latest"
+                - option "Custom..."
+            - generic [ref=e151]:
+              - generic [ref=e152]: API Key *
+              - textbox "sk-..." [ref=e153]
+            - generic [ref=e155] [cursor=pointer]:
+              - checkbox "Use custom endpoint" [ref=e156]
+              - generic [ref=e157]: Use custom endpoint
+            - generic [ref=e161]:
+              - button "Test Connection" [ref=e162] [cursor=pointer]:
+                - img [ref=e163]
+                - text: Test Connection
+              - button "Save Connection" [disabled] [ref=e165]:
+                - img [ref=e166]
+                - text: Save Connection
+        - generic [ref=e53]:
+          - img [ref=e56]
+          - heading "No connections yet" [level=3] [ref=e59]
+          - paragraph [ref=e60]: Add your first database, LLM, or Jira connection to start building mapping projects.

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, memo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { connectionsApi } from '../../services/api'
 import { Trash2, CheckCircle, XCircle, Database, Server, Link2, Sparkles, Pencil } from 'lucide-react'
@@ -26,12 +26,23 @@ const FILTERS: { id: FilterType; label: string }[] = [
   { id: 'jira', label: 'Jira' },
 ]
 
-export function ConnectionList({ onDelete, onEdit }: { onDelete: () => void; onEdit?: (conn: any) => void }) {
+function ConnectionListInner({ onDelete, onEdit }: { onDelete: () => void; onEdit?: (conn: any) => void }) {
   const [filter, setFilter] = useState<FilterType>('all')
   const { data, isLoading } = useQuery({
     queryKey: ['connections'],
-    queryFn: () => connectionsApi.list()
+    queryFn: () => connectionsApi.list(),
+    staleTime: 60000
   })
+
+  const connections = data?.data || []
+
+  const filtered = useMemo(() => {
+    return filter === 'all'
+      ? connections
+      : filter === 'database'
+        ? connections.filter((c: any) => c.connection_type === 'source' || c.connection_type === 'target')
+        : connections.filter((c: any) => c.connection_type === filter)
+  }, [connections, filter])
 
   if (isLoading) {
     return (
@@ -43,14 +54,6 @@ export function ConnectionList({ onDelete, onEdit }: { onDelete: () => void; onE
       </div>
     )
   }
-
-  const connections = data?.data || []
-
-  const filtered = filter === 'all'
-    ? connections
-    : filter === 'database'
-      ? connections.filter((c: any) => c.connection_type === 'source' || c.connection_type === 'target')
-      : connections.filter((c: any) => c.connection_type === filter)
 
   if (connections.length === 0) {
     return (
@@ -163,3 +166,5 @@ export function ConnectionList({ onDelete, onEdit }: { onDelete: () => void; onE
     </div>
   )
 }
+
+export const ConnectionList = memo(ConnectionListInner)

@@ -1,6 +1,6 @@
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -15,8 +15,12 @@ router = APIRouter(prefix="/connections", tags=["connections"])
 
 
 @router.get("/", response_model=List[ConnectionResponse])
-async def list_connections(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Connection))
+async def list_connections(
+    skip: int = Query(0, ge=0, description="Number of items to skip"),
+    limit: int = Query(50, ge=1, le=100, description="Max number of items to return"),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(Connection).offset(skip).limit(limit))
     connections = result.scalars().all()
     return connections
 

@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Boolean, DateTime, Text, Enum, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Boolean, DateTime, Text, Enum, ForeignKey, JSON, Uuid
 from app.database import Base
 import enum
 
@@ -14,9 +13,9 @@ class ObjectType(str, enum.Enum):
 class SchemaCache(Base):
     __tablename__ = "schema_cache"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    connection_id = Column(UUID(as_uuid=True), ForeignKey("connections.id"), nullable=False)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
+    id = Column(Uuid(as_uuid=False), primary_key=True, default=uuid.uuid4)
+    connection_id = Column(Uuid(as_uuid=False), ForeignKey("connections.id"), nullable=False)
+    project_id = Column(Uuid(as_uuid=False), ForeignKey("projects.id"), nullable=False)
     object_type = Column(Enum(ObjectType), nullable=False)
     schema_name = Column(String(255), nullable=True)
     table_name = Column(String(255), nullable=True)

@@ -1,0 +1,126 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e44]
+            - generic [ref=e48]:
+              - heading "Connections" [level=2] [ref=e49]
+              - paragraph [ref=e50]: Manage database, LLM, and Jira connections
+          - button "Cancel" [active] [ref=e56] [cursor=pointer]:
+            - img [ref=e52]
+            - text: Cancel
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - button "Database" [ref=e60] [cursor=pointer]:
+              - img [ref=e61]
+              - text: Database
+            - button "LLM Model" [ref=e65] [cursor=pointer]:
+              - img [ref=e66]
+              - text: LLM Model
+            - button "Jira" [ref=e68] [cursor=pointer]:
+              - img [ref=e69]
+              - text: Jira
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e75]:
+                  - generic [ref=e76]: Connection Name *
+                  - textbox "Production Postgres" [ref=e77]
+                - generic [ref=e78]:
+                  - generic [ref=e79]: Description
+                  - textbox "Optional description" [ref=e80]
+              - generic [ref=e81]:
+                - button "source" [ref=e82] [cursor=pointer]
+                - button "target" [ref=e83] [cursor=pointer]
+                - generic [ref=e84]: Connection type
+            - generic [ref=e85]:
+              - generic [ref=e86]:
+                - generic [ref=e87]: Database Type *
+                - combobox [ref=e88]:
+                  - option "PostgreSQL" [selected]
+                  - option "MySQL"
+                  - option "SQL Server"
+                  - option "Oracle"
+                  - option "Snowflake"
+                  - option "BigQuery"
+                  - option "CSV"
+                  - option "Parquet"
+              - generic [ref=e89]:
+                - generic [ref=e90]:
+                  - generic [ref=e91]: Host
+                  - textbox "localhost" [ref=e92]
+                - generic [ref=e93]:
+                  - generic [ref=e94]: Port
+                  - textbox "5432" [ref=e95]
+              - generic [ref=e96]:
+                - generic [ref=e97]:
+                  - generic [ref=e98]: Database *
+                  - textbox [ref=e99]
+                - generic [ref=e100]:
+                  - generic [ref=e101]: Schema
+                  - textbox "public" [ref=e102]
+            - generic [ref=e103]:
+              - heading "Authentication" [level=4] [ref=e104]
+              - generic [ref=e105]:
+                - generic [ref=e106]:
+                  - generic [ref=e107]: Username *
+                  - textbox [ref=e108]
+                - generic [ref=e109]:
+                  - generic [ref=e110]: Password *
+                  - textbox [ref=e111]
+            - generic [ref=e112]:
+              - heading "Advanced Options" [level=4] [ref=e113]
+              - generic [ref=e114]:
+                - generic [ref=e115]:
+                  - generic [ref=e116]: SSL Mode
+                  - combobox [ref=e117]:
+                    - option "disable"
+                    - option "allow"
+                    - option "prefer" [selected]
+                    - option "require"
+                    - option "verify-ca"
+                    - option "verify-full"
+                - generic [ref=e118]:
+                  - generic [ref=e119]: Connection Timeout
+                  - textbox "30" [ref=e120]
+            - generic [ref=e121]:
+              - button "Test Connection" [ref=e122] [cursor=pointer]:
+                - img [ref=e123]
+                - text: Test Connection
+              - button "Save Connection" [disabled] [ref=e125]:
+                - img [ref=e126]
+                - text: Save Connection
+        - generic [ref=e53]:
+          - img [ref=e130]
+          - heading "No connections yet" [level=3] [ref=e133]
+          - paragraph [ref=e134]: Add your first database, LLM, or Jira connection to start building mapping projects.

@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Boolean, DateTime, Text, Enum, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Boolean, DateTime, Text, Enum, ForeignKey, JSON, Uuid
 from app.database import Base
 import enum
 
@@ -24,8 +23,8 @@ class DBType(str, enum.Enum):
 class Connection(Base):
     __tablename__ = "connections"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id = Column(Uuid(as_uuid=False), primary_key=True, default=uuid.uuid4)
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id"), nullable=False)
     name = Column(String(255), nullable=False)
     connection_type = Column(Enum(ConnectionType), nullable=False)
     db_type = Column(Enum(DBType), nullable=True)

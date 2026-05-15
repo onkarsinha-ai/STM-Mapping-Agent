@@ -11,6 +11,7 @@ const LLM_PROVIDERS = [
   { value: 'ollama', label: 'Ollama', models: ['llama3', 'mistral', 'codellama'] },
   { value: 'groq', label: 'Groq', models: ['llama3-70b-8192', 'mixtral-8x7b-32768'] },
   { value: 'cohere', label: 'Cohere', models: ['command-r', 'command-r-plus'] },
+  { value: 'gemini', label: 'Google Gemini', models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-1.5-pro'] },
   { value: 'kimi', label: 'Kimi (Moonshot AI)', models: ['kimi-k2', 'kimi-latest'] },
 ]
 
@@ -22,6 +23,7 @@ const DEFAULT_BASE_URLS: Record<string, string> = {
   ollama: 'http://localhost:11434',
   groq: '',
   cohere: '',
+  gemini: 'https://generativelanguage.googleapis.com/v1beta',
   kimi: 'https://api.moonshot.cn/v1',
 }
 
@@ -43,11 +45,12 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
 
   useEffect(() => {
     const defaultUrl = DEFAULT_BASE_URLS[provider] || ''
-    setParams({
+    setParams(prev => ({
+      ...prev,
       model: providerInfo?.models[0] || '',
       api_key: '',
       base_url: defaultUrl,
-    })
+    }))
     setCustomEndpoint(false)
     setTestResult(null)
   }, [provider])
@@ -56,22 +59,39 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
     setParams(prev => ({ ...prev, [key]: value }))
   }
 
+  const buildApiParams = () => {
+    const apiParams = { ...params }
+    if (!customEndpoint) {
+      delete apiParams.base_url
+    }
+    // If using a custom model, replace 'custom' with the actual model name
+    if (apiParams.model === 'custom' && apiParams.custom_model) {
+      apiParams.model = apiParams.custom_model
+    }
+    delete apiParams.custom_model
+    return apiParams
+  }
+
+  const getErrorMessage = (e: any): string => {
+    const detail = e.response?.data?.detail
+    if (typeof detail === 'string') return detail
+    if (Array.isArray(detail)) return detail.map((d: any) => d.msg || String(d)).join(', ')
+    if (detail) return JSON.stringify(detail)
+    return e.message || 'Request failed'
+  }
+
   const handleTest = async () => {
     setTesting(true)
     setTestResult(null)
     try {
-      const testParams = { ...params }
-      if (!customEndpoint) {
-        delete testParams.base_url
-      }
       const res = await connectionsApi.test({
         connection_type: 'llm',
         provider,
-        params: testParams
+        params: buildApiParams()
       })
       setTestResult(res.data)
     } catch (e: any) {
-      setTestResult({ success: false, message: e.response?.data?.detail || 'Test failed' })
+      setTestResult({ success: false, message: getErrorMessage(e) })
     }
     setTesting(false)
   }
@@ -79,22 +99,18 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const saveParams = { ...params }
-      if (!customEndpoint) {
-        delete saveParams.base_url
-      }
       await connectionsApi.create({
         name,
         connection_type: 'llm',
         provider,
-        params: saveParams
+        params: buildApiParams()
       })
       onSuccess()
       setName('')
       setDescription('')
       setTestResult(null)
     } catch (e: any) {
-      alert(e.response?.data?.detail || 'Save failed')
+      alert(getErrorMessage(e))
     }
     setSaving(false)
   }
@@ -217,19 +233,21 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
 
       {testResult && (
         <div
-          className="p-3 rounded-lg flex items-center gap-2 text-sm"
+          className="p-3 rounded-lg flex items-start gap-2 text-sm"
           style={{
             backgroundColor: testResult.success ? 'var(--success-soft)' : 'var(--error-soft)',
             color: testResult.success ? 'var(--success)' : 'var(--error)'
           }}
         >
-          {testResult.success ? <CheckCircle size={16} /> : <XCircle size={16} />}
-          {testResult.message}
+          <span className="mt-0.5 shrink-0">
+            {testResult.success ? <CheckCircle size={16} /> : <XCircle size={16} />}
+          </span>
+          <span className="break-words">{testResult.message}</span>
         </div>
       )}
 
       <div className="flex gap-3">
-        <button onClick={handleTest} disabled={testing} className="btn-secondary">
+        <button type="button" onClick={handleTest} disabled={testing} className="btn-secondary">
           {testing ? (
             <><Loader2 size={16} className="animate-spin" /> Testing...</>
           ) : (
@@ -237,6 +255,7 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
           )}
         </button>
         <button
+          type="button"
           onClick={handleSave}
           disabled={saving || !testResult?.success || !name}
           className="btn-primary"
