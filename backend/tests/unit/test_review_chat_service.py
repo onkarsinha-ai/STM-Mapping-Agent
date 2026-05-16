@@ -3,6 +3,52 @@ from unittest.mock import AsyncMock, MagicMock, patch, call
 from app.services.review_chat_service import ReviewChatService
 
 
+@pytest.mark.asyncio
+async def test_send_message_returns_ai_response_and_applied_actions():
+    db = AsyncMock()
+
+    # Mock project and connection
+    project = MagicMock()
+    project.llm_connection_id = "conn-1"
+    conn = MagicMock()
+    conn.encrypted_connection_string = "enc"
+    conn.provider = "openai"
+    db.get = AsyncMock(side_effect=[project, conn])
+
+    # Mock db.execute -> result.scalars().all()
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.all.return_value = []
+    db.execute = AsyncMock(return_value=mock_result)
+
+    # Mock decrypt and json.loads for connection params
+    with patch("app.services.review_chat_service.decrypt", return_value='{"api_key":"k","model":"gpt-4"}'):
+        with patch("app.services.review_chat_service.MappingEngine") as mock_engine:
+            mock_engine.update_mapping_fields = AsyncMock(return_value=None)
+
+            # Mock litellm.acompletion
+            mock_response = MagicMock()
+            mock_response.choices = [MagicMock()]
+            mock_response.choices[0].message.content = (
+                "I updated the mapping.\n\n"
+                '```json\n{"actions": [{"mapping_id": "map-1", "updates": {"source_column": "user_id"}}]}\n```'
+            )
+
+            with patch("app.services.review_chat_service.litellm.acompletion", new_callable=AsyncMock, return_value=mock_response):
+                with patch.object(ReviewChatService, "_build_system_prompt", return_value="system"):
+                    ai_text, applied = await ReviewChatService.send_message(
+                        project_id="proj-1",
+                        user_message="Change source to user_id",
+                        db=db
+                    )
+
+    assert "updated" in ai_text.lower()
+    assert len(applied) == 1
+    assert applied[0]["mapping_id"] == "map-1"
+    assert applied[0]["updates"]["source_column"] == "user_id"
+    assert db.add.call_count == 2  # user + assistant messages
+    assert db.commit.call_count == 2
+
+
 def test_build_system_prompt_with_mappings():
     mappings = [
         {

@@ -1,17 +1,19 @@
 import json
+import logging
 import re
 from typing import List, Dict, Any, Optional, Tuple
 
+import litellm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from app.core.encryption import decrypt
 from app.models.review_chat import ReviewChatMessage, ChatRole
 from app.models.mapping import Mapping
 from app.models.project import Project
 from app.models.connection import Connection
 from app.services.llm_orchestrator import LLMOrchestrator
 from app.services.mapping_engine import MappingEngine
-from app.database import AsyncSessionLocal
 
 
 class ReviewChatService:
@@ -97,9 +99,8 @@ Do not include the JSON block unless you actually made changes.
                     modifications
                 )
                 applied.append({"mapping_id": mapping_id, "updates": modifications})
-            except Exception:
-                # Log and continue — don't fail the whole chat
-                pass
+            except Exception as e:
+                logging.warning(f"Failed to apply mapping update for {mapping_id}: {e}")
 
         return applied
 
@@ -130,9 +131,7 @@ Do not include the JSON block unless you actually made changes.
         if not conn:
             raise ValueError("LLM connection not found")
 
-        import json as _json
-        from app.core.encryption import decrypt
-        params = _json.loads(decrypt(conn.encrypted_connection_string))
+        params = json.loads(decrypt(conn.encrypted_connection_string))
         llm_config = {
             "api_key": params.get("api_key"),
             "model": params.get("model", "gpt-4"),
@@ -171,7 +170,6 @@ Do not include the JSON block unless you actually made changes.
             llm_config.get("base_url")
         )
 
-        import litellm
         response = await litellm.acompletion(
             model=litellm_model,
             messages=messages,
