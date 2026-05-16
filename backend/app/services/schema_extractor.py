@@ -6,6 +6,10 @@ import pandas as pd
 import fastavro
 
 
+class SchemaExtractionError(Exception):
+    """Raised when schema extraction fails due to parse errors."""
+
+
 class FileParser(ABC):
     @abstractmethod
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
@@ -33,45 +37,60 @@ class DataFrameMixin:
 
 class CSVParser(FileParser, DataFrameMixin):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
-        df = pd.read_csv(file_obj)
+        try:
+            df = pd.read_csv(file_obj)
+        except Exception as e:
+            raise SchemaExtractionError(f"Failed to parse CSV: {e}") from e
         return self._df_to_schema(df, source_name)
 
 
 class JSONParser(FileParser, DataFrameMixin):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
-        raw = file_obj.read()
-        text = raw.decode("utf-8").strip()
-        if text.startswith("["):
-            df = pd.read_json(io.BytesIO(raw))
-        else:
-            df = pd.read_json(io.BytesIO(raw), lines=True)
+        try:
+            raw = file_obj.read()
+            text = raw.decode("utf-8").strip()
+            if text.startswith("["):
+                df = pd.read_json(io.BytesIO(raw))
+            else:
+                df = pd.read_json(io.BytesIO(raw), lines=True)
+        except Exception as e:
+            raise SchemaExtractionError(f"Failed to parse JSON: {e}") from e
         return self._df_to_schema(df, source_name)
 
 
 class ParquetParser(FileParser, DataFrameMixin):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
-        df = pd.read_parquet(file_obj)
+        try:
+            df = pd.read_parquet(file_obj)
+        except Exception as e:
+            raise SchemaExtractionError(f"Failed to parse Parquet: {e}") from e
         return self._df_to_schema(df, source_name)
 
 
 class ExcelParser(FileParser, DataFrameMixin):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
-        df = pd.read_excel(file_obj)
+        try:
+            df = pd.read_excel(file_obj)
+        except Exception as e:
+            raise SchemaExtractionError(f"Failed to parse Excel: {e}") from e
         return self._df_to_schema(df, source_name)
 
 
 class AvroParser(FileParser):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
-        reader = fastavro.reader(file_obj)
-        schema = reader.writer_schema
-        fields = schema.get("fields", [])
-        columns: List[Dict[str, str]] = []
-        for field in fields:
-            name = field["name"]
-            avro_type = field["type"]
-            mapped = self._map_avro_type(avro_type)
-            columns.append({"name": name, "type": mapped})
-        return {"source_name": source_name, "columns": columns}
+        try:
+            reader = fastavro.reader(file_obj)
+            schema = reader.writer_schema
+            fields = schema.get("fields", [])
+            columns: List[Dict[str, str]] = []
+            for field in fields:
+                name = field["name"]
+                avro_type = field["type"]
+                mapped = self._map_avro_type(avro_type)
+                columns.append({"name": name, "type": mapped})
+            return {"source_name": source_name, "columns": columns}
+        except Exception as e:
+            raise SchemaExtractionError(f"Failed to parse Avro: {e}") from e
 
     def _map_avro_type(self, avro_type: Any) -> str:
         if isinstance(avro_type, list):
