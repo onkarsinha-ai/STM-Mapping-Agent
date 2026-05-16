@@ -14,21 +14,46 @@ async def discover_schema(project_id: str, background_tasks: BackgroundTasks, db
     project = await db.get(Project, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    if not project.source_connection_id:
-        raise HTTPException(status_code=400, detail="Source connection not set")
 
-    params = await ConnectionService.get_connection_string(str(project.source_connection_id))
+    has_db_source = project.source_connection_id is not None
+    has_inline_source = project.source_schemas is not None and len(project.source_schemas) > 0
+    if not has_db_source and not has_inline_source:
+        raise HTTPException(status_code=400, detail="Source not set")
 
-    await SchemaDiscoveryService.discover_schema(
-        str(project.source_connection_id),
-        project_id,
-        params
-    )
+    has_db_target = project.target_connection_id is not None
+    has_inline_target = project.target_schema is not None
+    if not has_db_target and not has_inline_target:
+        raise HTTPException(status_code=400, detail="Target not set")
+
+    await SchemaDiscoveryService.clear_project_cache(project_id)
+
+    if has_inline_source:
+        for schema_data in project.source_schemas:
+            await SchemaDiscoveryService.insert_inline_schema(project_id, schema_data, is_target=False)
+
+    if has_db_source:
+        params = await ConnectionService.get_connection_string(str(project.source_connection_id))
+        await SchemaDiscoveryService.discover_schema(
+            str(project.source_connection_id),
+            project_id,
+            params
+        )
+
+    if has_inline_target:
+        await SchemaDiscoveryService.insert_inline_schema(project_id, project.target_schema, is_target=True)
+
+    if has_db_target:
+        params = await ConnectionService.get_connection_string(str(project.target_connection_id))
+        await SchemaDiscoveryService.discover_schema(
+            str(project.target_connection_id),
+            project_id,
+            params
+        )
 
     project.current_phase = "discovery"
     await db.commit()
 
-    return {"message": "Schema discovery started"}
+    return {"message": "Schema discovery completed"}
 
 
 @router.get("/{project_id}/schema")
