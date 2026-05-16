@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.routers import auth, connections, projects, discovery, mappings, export
+from app.routers import auth, connections, projects, discovery, mappings, export, files
 from app.database import AsyncSessionLocal, init_db
 from app.models.user import User
 from app.core.security import get_password_hash
@@ -43,6 +43,7 @@ app.include_router(projects.router)
 app.include_router(discovery.router)
 app.include_router(mappings.router)
 app.include_router(export.router)
+app.include_router(files.router)
 
 
 @app.get("/health")
