@@ -40,7 +40,7 @@ export const discoveryApi = {
 // Mapping APIs
 export const mappingsApi = {
   list: (projectId: string) => api.get(`/projects/${projectId}/mappings`),
-  update: (mappingId: string, data: any) => api.put(`/mappings/${mappingId}`, data)
+  update: (mappingId: string, data: any) => api.put(`/projects/mappings/${mappingId}`, data)
 }
 
 // Propose APIs

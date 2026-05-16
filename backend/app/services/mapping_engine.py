@@ -31,10 +31,10 @@ class MappingEngine:
                 "transformation_rule": mapping.transformation_rule
             }
 
-            if action == "approve":
+            if action in ("approve", "approved"):
                 mapping.status = MappingStatus.approved
                 user_action = UserAction.approved
-            elif action == "reject":
+            elif action in ("reject", "rejected"):
                 mapping.status = MappingStatus.rejected
                 user_action = UserAction.rejected
             elif action == "modify" and modifications:

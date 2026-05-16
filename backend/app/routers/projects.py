@@ -48,14 +48,20 @@ async def get_project(project_id: str, db: AsyncSession = Depends(get_db)):
     return project
 
 
+from pydantic import BaseModel
+
+class PhaseUpdate(BaseModel):
+    phase: ProjectPhase
+
 @router.put("/{project_id}/phase")
-async def update_phase(project_id: str, phase: ProjectPhase, db: AsyncSession = Depends(get_db)):
+async def update_phase(project_id: str, data: PhaseUpdate, db: AsyncSession = Depends(get_db)):
+    phase = data.phase
     project = await db.get(Project, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     project.current_phase = phase
     await db.commit()
-    return {"message": f"Phase updated to {phase}"}
+    return {"message": f"Phase updated to {phase.value}"}
 
 
 @router.delete("/{project_id}")
