@@ -55,16 +55,27 @@ class TestProposeEndpoint:
     @pytest.mark.asyncio
     async def test_propose_no_schemas_discovered(self):
         project_id = "00000000-0000-0000-0000-000000000001"
+        llm_conn_id = "00000000-0000-0000-0000-000000000002"
 
         mock_project = MagicMock()
         mock_project.id = project_id
-        mock_project.llm_connection_id = "00000000-0000-0000-0000-000000000002"
+        mock_project.llm_connection_id = llm_conn_id
         mock_project.target_connection_id = None
         mock_project.jira_ticket_key = None
         mock_project.user_text_input = None
 
+        mock_llm_conn = MagicMock()
+        mock_llm_conn.provider = "openai"
+
+        def mock_get_side_effect(model, ident):
+            if str(ident) == project_id:
+                return mock_project
+            if str(ident) == llm_conn_id:
+                return mock_llm_conn
+            return None
+
         mock_db = AsyncMock()
-        mock_db.get = AsyncMock(return_value=mock_project)
+        mock_db.get = AsyncMock(side_effect=mock_get_side_effect)
         mock_db.execute = AsyncMock()
         mock_db.execute.return_value.scalars = MagicMock(return_value=MagicMock(all=MagicMock(return_value=[])))
 
@@ -94,6 +105,16 @@ class TestProposeEndpoint:
         mock_project.user_text_input = None
         mock_project.current_phase = None
 
+        mock_llm_conn = MagicMock()
+        mock_llm_conn.provider = "openai"
+
+        def mock_get_side_effect(model, ident):
+            if str(ident) == project_id:
+                return mock_project
+            if str(ident) == llm_conn_id:
+                return mock_llm_conn
+            return None
+
         mock_entry = MagicMock()
         mock_entry.connection_id = None
         mock_entry.schema_name = "target"
@@ -104,7 +125,7 @@ class TestProposeEndpoint:
         mock_entry.project_id = project_id
 
         mock_db = AsyncMock()
-        mock_db.get = AsyncMock(return_value=mock_project)
+        mock_db.get = AsyncMock(side_effect=mock_get_side_effect)
         mock_db.commit = AsyncMock(return_value=None)
 
         mock_result = MagicMock()

@@ -56,6 +56,25 @@ Output as JSON array with this structure:
         return prompt
 
     @staticmethod
+    def _build_litellm_model(provider: Optional[str], model: str, base_url: Optional[str]) -> str:
+        """Build LiteLLM model string with provider prefix."""
+        if provider == "azure":
+            return f"azure/{model}"
+        elif provider == "ollama":
+            return f"ollama/{model}"
+        elif provider == "groq":
+            return f"groq/{model}"
+        elif provider == "cohere":
+            return f"cohere/{model}"
+        elif provider == "gemini":
+            return f"gemini/{model}"
+        elif provider == "kimi":
+            if base_url:
+                return f"openai/{model}"
+            return f"moonshot/{model}"
+        return model
+
+    @staticmethod
     async def propose_mappings(project_id: str, target_schema: Dict, source_schema: Dict,
                                llm_config: Dict, jira_context: Optional[str] = None,
                                user_text: str = "", historical_feedback: List[Dict] = []) -> List[Mapping]:
@@ -64,9 +83,12 @@ Output as JSON array with this structure:
         api_key = llm_config.get("api_key")
         model = llm_config.get("model", "gpt-4")
         base_url = llm_config.get("base_url")
+        provider = llm_config.get("provider")
+
+        litellm_model = LLMOrchestrator._build_litellm_model(provider, model, base_url)
 
         response = await litellm.acompletion(
-            model=model,
+            model=litellm_model,
             messages=[{"role": "user", "content": prompt}],
             api_key=api_key,
             api_base=base_url,

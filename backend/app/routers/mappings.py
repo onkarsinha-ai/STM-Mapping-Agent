@@ -37,10 +37,16 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+    # Look up connection to get provider for LiteLLM model routing
+    from app.models.connection import Connection
+    llm_conn = await db.get(Connection, str(project.llm_connection_id))
+    provider = llm_conn.provider if llm_conn else None
+
     llm_config = {
         "api_key": llm_params.get("api_key"),
         "model": llm_params.get("model", "gpt-4"),
         "base_url": llm_params.get("base_url"),
+        "provider": provider,
     }
 
     # Fetch cached schema entries for this project
