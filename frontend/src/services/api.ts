@@ -60,6 +60,15 @@ export const exportApi = {
   download: (projectId: string) => api.get(`/projects/${projectId}/export`, { responseType: 'blob' })
 }
 
+// Review Chat APIs
+export const reviewChatApi = {
+  getHistory: (projectId: string) => api.get(`/projects/${projectId}/review-chat`),
+  sendMessage: (projectId: string, message: string) =>
+    api.post(`/projects/${projectId}/review-chat`, { message }),
+  finishReview: (projectId: string) =>
+    api.post(`/projects/${projectId}/finish-review`)
+}
+
 // File APIs
 export const filesApi = {
   extractSchema: (file: File) => {
