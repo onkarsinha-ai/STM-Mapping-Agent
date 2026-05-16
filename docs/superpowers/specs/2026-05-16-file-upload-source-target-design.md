@@ -137,7 +137,7 @@ Add `source_name` column (nullable string):
 | `connection_id` | UUID | FK, nullable |
 | `source_name` | String | New. e.g., `customers.csv` or connection name |
 | `schema_data` | JSON | Column list |
-| `source_type` | Enum | `inline_file`, `database` |
+| `source_type` | Enum | `inline_file`, `database` — nullable, defaults to `database` for existing rows |
 
 ### Discovery Endpoint Changes
 
@@ -182,6 +182,11 @@ Target:
 | Parquet | `.parquet` | `pandas` |
 | Excel | `.xlsx`, `.xls` | `pandas` (openpyxl) |
 | Avro | `.avro` | `fastavro` |
+
+**Format notes:**
+- **JSON:** Supports both line-delimited JSONL (`{"a":1}\n{"a":2}`) and array-of-objects (`[{"a":1}, {"a":2}]`). Auto-detected.
+- **Excel:** Reads the first sheet by default. Sheet selection UI is out of scope for MVP.
+- **Avro:** Schema extracted from file header; no data rows read.
 
 ### Type Inference Mapping
 
