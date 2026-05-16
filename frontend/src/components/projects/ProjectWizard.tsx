@@ -1,7 +1,98 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { projectsApi, connectionsApi, filesApi } from '../../services/api'
 import { Database, Sparkles, Link2, Hash, Loader2, Upload, FileText, X } from 'lucide-react'
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+}
+
+/* ─── Reusable sub-components ─── */
+
+interface ModeToggleProps {
+  mode: 'connection' | 'file'
+  onChange: (mode: 'connection' | 'file') => void
+  activeColorClass: string
+  fileLabel: string
+}
+
+function ModeToggle({ mode, onChange, activeColorClass, fileLabel }: ModeToggleProps) {
+  const activeBase = activeColorClass === 'cyan' ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-green-500/20 border-green-500/50 text-green-400'
+  return (
+    <div className="flex gap-2 mb-2">
+      <button
+        type="button"
+        onClick={() => onChange('connection')}
+        className={`px-3 py-1 text-xs rounded-md border transition-colors ${
+          mode === 'connection'
+            ? activeBase
+            : 'border-gray-700 text-gray-400 hover:text-gray-300'
+        }`}
+      >
+        Connection
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange('file')}
+        className={`px-3 py-1 text-xs rounded-md border transition-colors ${
+          mode === 'file'
+            ? activeBase
+            : 'border-gray-700 text-gray-400 hover:text-gray-300'
+        }`}
+      >
+        {fileLabel}
+      </button>
+    </div>
+  )
+}
+
+interface FileUploadEntryProps {
+  entry: FileEntry
+  onRemove: () => void
+  color: string
+}
+
+function FileUploadEntry({ entry, onRemove, color }: FileUploadEntryProps) {
+  return (
+    <div className="flex items-start gap-2 p-2 rounded-md bg-gray-800/50 border border-gray-700">
+      <FileText size={14} className="mt-0.5 shrink-0" style={{ color: `var(--${color})` }} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-300 truncate">{entry.file.name}</span>
+          {entry.uploading && <Loader2 size={12} className="animate-spin text-gray-400" />}
+          {entry.schema && <span className="text-xs text-green-400">Ready</span>}
+          {entry.error && <span className="text-xs text-red-400">{entry.error}</span>}
+        </div>
+        {entry.schema && (
+          <div className="mt-1 text-xs text-gray-400">
+            {entry.schema.columns?.length || 0} columns: {entry.schema.columns?.map((c: any) => c.name || c).join(', ')}
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="shrink-0 text-gray-500 hover:text-red-400 transition-colors"
+      >
+        <X size={14} />
+      </button>
+    </div>
+  )
+}
+
+/* ─── Types ─── */
+
+interface FileEntry {
+  id: string
+  file: File
+  schema: any
+  uploading: boolean
+  error?: string
+}
+
+/* ─── Main component ─── */
 
 export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   const [name, setName] = useState('')
@@ -14,8 +105,11 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
 
   const [sourceMode, setSourceMode] = useState<'connection' | 'file'>('connection')
   const [targetMode, setTargetMode] = useState<'connection' | 'file'>('connection')
-  const [sourceFiles, setSourceFiles] = useState<Array<{ file: File; schema: any; uploading: boolean; error?: string }>>([])
-  const [targetFile, setTargetFile] = useState<{ file: File; schema: any; uploading: boolean; error?: string } | null>(null)
+  const [sourceFiles, setSourceFiles] = useState<FileEntry[]>([])
+  const [targetFile, setTargetFile] = useState<FileEntry | null>(null)
+
+  // Abort/cleanup tracking for in-flight requests
+  const cancelledIds = useRef<Set<string>>(new Set())
 
   const queryClient = useQueryClient()
   const { data: connectionsData } = useQuery({
@@ -28,25 +122,42 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   const targetConnections = connections.filter((c: any) => c.connection_type === 'target')
   const llmConnections = connections.filter((c: any) => c.connection_type === 'llm')
 
+  const cancelId = useCallback((id: string) => {
+    cancelledIds.current.add(id)
+  }, [])
+
+  const isCancelled = useCallback((id: string) => {
+    return cancelledIds.current.has(id)
+  }, [])
+
   const handleSourceFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    const newEntries = files.map(file => ({ file, schema: null, uploading: true }))
+    const newEntries: FileEntry[] = files.map(file => {
+      if (file.size > MAX_FILE_SIZE) {
+        return { id: generateId(), file, schema: null, uploading: false, error: 'File exceeds 10MB limit' }
+      }
+      return { id: generateId(), file, schema: null, uploading: true }
+    })
+
     setSourceFiles(prev => [...prev, ...newEntries])
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+    for (const entry of newEntries) {
+      if (entry.error) continue // skip oversized files
+
       try {
-        const response = await filesApi.extractSchema(file)
+        const response = await filesApi.extractSchema(entry.file)
+        if (isCancelled(entry.id)) continue
         setSourceFiles(prev => {
-          const idx = prev.findIndex(f => f.file === file)
+          const idx = prev.findIndex(f => f.id === entry.id)
           if (idx === -1) return prev
           const updated = [...prev]
           updated[idx] = { ...updated[idx], schema: response.data, uploading: false }
           return updated
         })
       } catch (err: any) {
+        if (isCancelled(entry.id)) continue
         setSourceFiles(prev => {
-          const idx = prev.findIndex(f => f.file === file)
+          const idx = prev.findIndex(f => f.id === entry.id)
           if (idx === -1) return prev
           const updated = [...prev]
           updated[idx] = { ...updated[idx], uploading: false, error: err.response?.data?.detail || 'Parse failed' }
@@ -59,20 +170,33 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   const handleTargetFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setTargetFile({ file, schema: null, uploading: true })
+
+    if (file.size > MAX_FILE_SIZE) {
+      const id = generateId()
+      setTargetFile({ id, file, schema: null, uploading: false, error: 'File exceeds 10MB limit' })
+      return
+    }
+
+    const id = generateId()
+    setTargetFile({ id, file, schema: null, uploading: true })
+
     try {
       const response = await filesApi.extractSchema(file)
-      setTargetFile({ file, schema: response.data, uploading: false })
+      if (isCancelled(id)) return
+      setTargetFile({ id, file, schema: response.data, uploading: false })
     } catch (err: any) {
-      setTargetFile({ file, schema: null, uploading: false, error: err.response?.data?.detail || 'Parse failed' })
+      if (isCancelled(id)) return
+      setTargetFile({ id, file, schema: null, uploading: false, error: err.response?.data?.detail || 'Parse failed' })
     }
   }
 
-  const removeSourceFile = (file: File) => {
-    setSourceFiles(prev => prev.filter(f => f.file !== file))
+  const removeSourceFile = (id: string) => {
+    cancelId(id)
+    setSourceFiles(prev => prev.filter(f => f.id !== id))
   }
 
   const removeTargetFile = () => {
+    if (targetFile) cancelId(targetFile.id)
     setTargetFile(null)
   }
 
@@ -89,6 +213,7 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
       if (sourceMode === 'connection') {
         payload.source_connection_id = sourceId || null
       } else {
+        // Send full schema response {source_name, columns}
         payload.source_schemas = sourceFiles.filter(f => f.schema).map(f => f.schema)
       }
 
@@ -111,6 +236,7 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
       setTargetFile(null)
       setSourceMode('connection')
       setTargetMode('connection')
+      cancelledIds.current.clear()
     } catch (e: any) {
       alert(e.response?.data?.detail || 'Failed to create project')
     }
@@ -172,6 +298,7 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
       </div>
 
       <div className={inputGrid}>
+        {/* Source */}
         <div>
           <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
             <span className="inline-flex items-center gap-1.5">
@@ -179,30 +306,12 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
               Source
             </span>
           </label>
-          <div className="flex gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setSourceMode('connection')}
-              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                sourceMode === 'connection'
-                  ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                  : 'border-gray-700 text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              Connection
-            </button>
-            <button
-              type="button"
-              onClick={() => setSourceMode('file')}
-              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                sourceMode === 'file'
-                  ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                  : 'border-gray-700 text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              Upload File(s)
-            </button>
-          </div>
+          <ModeToggle
+            mode={sourceMode}
+            onChange={setSourceMode}
+            activeColorClass="cyan"
+            fileLabel="Upload File(s)"
+          />
           {sourceMode === 'connection' ? (
             <select
               value={sourceId}
@@ -228,38 +337,20 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
                 />
               </label>
               <div className="mt-2 space-y-2">
-                {sourceFiles.map((entry, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 p-2 rounded-md bg-gray-800/50 border border-gray-700"
-                  >
-                    <FileText size={14} className="mt-0.5 shrink-0" style={{ color: 'var(--cyan)' }} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-300 truncate">{entry.file.name}</span>
-                        {entry.uploading && <Loader2 size={12} className="animate-spin text-gray-400" />}
-                        {entry.schema && <span className="text-xs text-green-400">Ready</span>}
-                        {entry.error && <span className="text-xs text-red-400">{entry.error}</span>}
-                      </div>
-                      {entry.schema && (
-                        <div className="mt-1 text-xs text-gray-400">
-                          {entry.schema.columns?.length || 0} columns: {entry.schema.columns?.map((c: any) => c.name || c).join(', ')}
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeSourceFile(entry.file)}
-                      className="shrink-0 text-gray-500 hover:text-red-400 transition-colors"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
+                {sourceFiles.map(entry => (
+                  <FileUploadEntry
+                    key={entry.id}
+                    entry={entry}
+                    onRemove={() => removeSourceFile(entry.id)}
+                    color="cyan"
+                  />
                 ))}
               </div>
             </div>
           )}
         </div>
+
+        {/* Target */}
         <div>
           <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
             <span className="inline-flex items-center gap-1.5">
@@ -267,30 +358,12 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
               Target
             </span>
           </label>
-          <div className="flex gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setTargetMode('connection')}
-              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                targetMode === 'connection'
-                  ? 'bg-green-500/20 border-green-500/50 text-green-400'
-                  : 'border-gray-700 text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              Connection
-            </button>
-            <button
-              type="button"
-              onClick={() => setTargetMode('file')}
-              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                targetMode === 'file'
-                  ? 'bg-green-500/20 border-green-500/50 text-green-400'
-                  : 'border-gray-700 text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              Upload File
-            </button>
-          </div>
+          <ModeToggle
+            mode={targetMode}
+            onChange={setTargetMode}
+            activeColorClass="green"
+            fileLabel="Upload File"
+          />
           {targetMode === 'connection' ? (
             <select
               value={targetId}
@@ -315,28 +388,12 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
                 />
               </label>
               {targetFile && (
-                <div className="mt-2 flex items-start gap-2 p-2 rounded-md bg-gray-800/50 border border-gray-700">
-                  <FileText size={14} className="mt-0.5 shrink-0" style={{ color: 'var(--success)' }} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-300 truncate">{targetFile.file.name}</span>
-                      {targetFile.uploading && <Loader2 size={12} className="animate-spin text-gray-400" />}
-                      {targetFile.schema && <span className="text-xs text-green-400">Ready</span>}
-                      {targetFile.error && <span className="text-xs text-red-400">{targetFile.error}</span>}
-                    </div>
-                    {targetFile.schema && (
-                      <div className="mt-1 text-xs text-gray-400">
-                        {targetFile.schema.columns?.length || 0} columns: {targetFile.schema.columns?.map((c: any) => c.name || c).join(', ')}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeTargetFile}
-                    className="shrink-0 text-gray-500 hover:text-red-400 transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
+                <div className="mt-2">
+                  <FileUploadEntry
+                    entry={targetFile}
+                    onRemove={removeTargetFile}
+                    color="success"
+                  />
                 </div>
               )}
             </div>
