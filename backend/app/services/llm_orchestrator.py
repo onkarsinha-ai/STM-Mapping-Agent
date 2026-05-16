@@ -10,12 +10,13 @@ class LLMOrchestrator:
     def build_prompt(target_schema: Dict, source_schema: Dict,
                      jira_context: Optional[str], user_text: str,
                      historical_feedback: List[Dict]) -> str:
-        prompt = f"""You are a data mapping expert. Given a target table and source schema, propose column mappings.
+        prompt = f"""You are a data mapping expert. Given a target schema and one or more source schemas, propose column mappings.
 
 ## Target Schema
 {json.dumps(target_schema, indent=2)}
 
-## Source Schema
+## Source Schemas
+Top-level keys in the source schema are source names (e.g., filenames or database schemas).
 {json.dumps(source_schema, indent=2)}
 
 ## Context
@@ -33,7 +34,7 @@ class LLMOrchestrator:
         prompt += """
 ## Instructions
 For each target column, propose the best source column. Include:
-- source_table, source_column
+- source_table, source_column (use the source name as prefix if needed, e.g., "customers.csv.users.first_name")
 - business_logic: why this maps
 - transformation_rule: any SQL/transform needed
 - confidence_score: 0.0-1.0
