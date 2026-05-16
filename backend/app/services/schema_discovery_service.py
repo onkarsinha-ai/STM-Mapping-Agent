@@ -99,7 +99,7 @@ class SchemaDiscoveryService:
                 table_name=table_name,
                 column_name=col["name"],
                 data_type=col.get("type", "string"),
-                is_nullable=True
+                is_nullable=col.get("nullable", True)
             )
             entries.append(entry)
 
