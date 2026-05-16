@@ -42,6 +42,7 @@ class ProjectResponse(BaseModel):
     target_connection_id: Optional[UUID]
     source_schemas: Optional[List[Dict[str, Any]]] = None
     target_schema: Optional[Dict[str, Any]] = None
+    review_chat_completed: Optional[str] = None
 
     class Config:
         from_attributes = True
