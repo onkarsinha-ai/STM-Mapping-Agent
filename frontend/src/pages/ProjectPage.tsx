@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { projectsApi, discoveryApi } from '../services/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { projectsApi, discoveryApi, proposeApi } from '../services/api'
 import { SchemaBrowser } from '../components/schema/SchemaBrowser'
 import { MappingTable } from '../components/mappings/MappingTable'
-import { ArrowLeft, FolderOpen, Play } from 'lucide-react'
+import { ArrowLeft, FolderOpen, Play, Sparkles, Loader2 } from 'lucide-react'
 
 const PHASES = ['input', 'discovery', 'propose', 'review', 'export']
 const PHASE_LABELS: Record<string, string> = {
@@ -16,6 +17,7 @@ const PHASE_LABELS: Record<string, string> = {
 
 export function ProjectPage() {
   const { id } = useParams<{ id: string }>()
+  const queryClient = useQueryClient()
 
   const { data: projectData, isLoading: projectLoading } = useQuery({
     queryKey: ['project', id],
@@ -33,9 +35,36 @@ export function ProjectPage() {
   const phase = project?.current_phase || 'input'
   const phaseIndex = PHASES.indexOf(phase)
 
+  const [proposing, setProposing] = useState(false)
+
   const handleDiscover = async () => {
     await discoveryApi.discover(id!)
-    window.location.reload()
+    queryClient.invalidateQueries({ queryKey: ['project', id] })
+    queryClient.invalidateQueries({ queryKey: ['schema', id] })
+  }
+
+  const handlePropose = async () => {
+    setProposing(true)
+    try {
+      await proposeApi.generate(id!)
+      queryClient.invalidateQueries({ queryKey: ['project', id] })
+      queryClient.invalidateQueries({ queryKey: ['mappings', id] })
+    } catch (e: any) {
+      alert(e.response?.data?.detail || 'Failed to generate proposals')
+    }
+    setProposing(false)
+  }
+
+  const handlePhaseChange = async (phase: string) => {
+    await projectsApi.updatePhase(id!, phase)
+    queryClient.invalidateQueries({ queryKey: ['project', id] })
+  }
+
+  // Phase guard: only allow clicking phases that have been reached
+  const canReachPhase = (targetPhase: string) => {
+    const targetIndex = PHASES.indexOf(targetPhase)
+    const currentIndex = PHASES.indexOf(phase)
+    return targetIndex <= currentIndex + 1
   }
 
   if (projectLoading) {
@@ -92,7 +121,11 @@ export function ProjectPage() {
               <div key={p} className="flex items-center">
                 <div className="flex flex-col items-center gap-2">
                   <div
-                    className={`phase-step ${isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'}`}
+                    className={`phase-step ${isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'} ${canReachPhase(p) ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-50'} transition-opacity`}
+                    onClick={() => canReachPhase(p) && handlePhaseChange(p)}
+                    role="button"
+                    tabIndex={canReachPhase(p) ? 0 : -1}
+                    onKeyDown={(e) => { if (canReachPhase(p) && (e.key === 'Enter' || e.key === ' ')) handlePhaseChange(p) }}
                   >
                     {isCompleted ? (
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -150,9 +183,28 @@ export function ProjectPage() {
             <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
               Schema Discovery
             </h3>
-            <span className="badge" style={{ backgroundColor: 'var(--cyan-soft)', color: 'var(--cyan)' }}>
-              Live
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="badge" style={{ backgroundColor: 'var(--cyan-soft)', color: 'var(--cyan)' }}>
+                Live
+              </span>
+              <button
+                onClick={handlePropose}
+                disabled={proposing || Object.keys(schema).length === 0}
+                className="btn-primary"
+              >
+                {proposing ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} />
+                    Generate Proposals
+                  </>
+                )}
+              </button>
+            </div>
           </div>
           <SchemaBrowser schema={schema} />
         </div>

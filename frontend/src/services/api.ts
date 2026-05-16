@@ -43,6 +43,11 @@ export const mappingsApi = {
   update: (mappingId: string, data: any) => api.put(`/mappings/${mappingId}`, data)
 }
 
+// Propose APIs
+export const proposeApi = {
+  generate: (projectId: string) => api.post(`/projects/${projectId}/propose`)
+}
+
 // Export APIs
 export const exportApi = {
   generate: (projectId: string) => api.post(`/projects/${projectId}/export`),
