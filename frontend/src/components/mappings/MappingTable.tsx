@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { mappingsApi, exportApi } from '../../services/api'
-import { Check, X, Filter, FileSpreadsheet, Loader2 } from 'lucide-react'
+import { Check, X, Filter, FileSpreadsheet, Loader2, Sparkles } from 'lucide-react'
+import { ReviewChatDrawer } from './ReviewChatDrawer'
 
 const FILTERS = [
   { key: 'all', label: 'All' },
@@ -27,6 +28,7 @@ export function MappingTable({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
   const [filter, setFilter] = useState('all')
   const [exporting, setExporting] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['mappings', projectId],
@@ -97,23 +99,32 @@ export function MappingTable({ projectId }: { projectId: string }) {
             </button>
           ))}
         </div>
-        <button
-          onClick={handleExport}
-          disabled={exporting}
-          className="btn-primary"
-        >
-          {exporting ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Exporting...
-            </>
-          ) : (
-            <>
-              <FileSpreadsheet size={16} />
-              Export Excel
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="btn-secondary flex items-center gap-1.5"
+          >
+            <Sparkles size={16} />
+            AI Review Assistant
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="btn-primary"
+          >
+            {exporting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <FileSpreadsheet size={16} />
+                Export Excel
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -218,6 +229,12 @@ export function MappingTable({ projectId }: { projectId: string }) {
           </div>
         )}
       </div>
+
+      <ReviewChatDrawer
+        projectId={projectId}
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
     </div>
   )
 }
