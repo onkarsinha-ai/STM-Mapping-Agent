@@ -48,6 +48,12 @@ export const proposeApi = {
   generate: (projectId: string) => api.post(`/projects/${projectId}/propose`)
 }
 
+// Chat APIs
+export const chatApi = {
+  send: (connectionId: string, message: string) =>
+    api.post(`/connections/${connectionId}/chat`, { message })
+}
+
 // Export APIs
 export const exportApi = {
   generate: (projectId: string) => api.post(`/projects/${projectId}/export`),

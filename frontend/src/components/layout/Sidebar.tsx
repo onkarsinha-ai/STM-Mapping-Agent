@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Database, FolderKanban, Plus, GitBranch } from 'lucide-react'
+import { Database, FolderKanban, Plus, GitBranch, MessageSquare } from 'lucide-react'
 
 export function Sidebar() {
   const location = useLocation()
@@ -7,6 +7,7 @@ export function Sidebar() {
   const navItems = [
     { path: '/', label: 'Projects', icon: FolderKanban },
     { path: '/connections', label: 'Connections', icon: Database },
+    { path: '/chat', label: 'LLM Chat', icon: MessageSquare },
   ]
 
   const isActive = (path: string) => {
