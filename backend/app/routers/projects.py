@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from typing import List
 
 from app.database import get_db
 from app.models.project import Project, ProjectPhase
+from app.models.mapping import Mapping
+from app.models.schema_cache import SchemaCache
+from app.models.jira_context import JiraContext
 from app.schemas.project import ProjectCreate, ProjectResponse
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -27,7 +30,9 @@ async def create_project(data: ProjectCreate, db: AsyncSession = Depends(get_db)
         target_connection_id=data.target_connection_id,
         jira_connection_id=data.jira_connection_id,
         llm_connection_id=data.llm_connection_id,
-        jira_ticket_key=data.jira_ticket_key
+        jira_ticket_key=data.jira_ticket_key,
+        source_schemas=data.source_schemas,
+        target_schema=data.target_schema
     )
     db.add(project)
     await db.commit()
@@ -51,3 +56,16 @@ async def update_phase(project_id: str, phase: ProjectPhase, db: AsyncSession = 
     project.current_phase = phase
     await db.commit()
     return {"message": f"Phase updated to {phase}"}
+
+
+@router.delete("/{project_id}")
+async def delete_project(project_id: str, db: AsyncSession = Depends(get_db)):
+    project = await db.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await db.execute(delete(Mapping).where(Mapping.project_id == project_id))
+    await db.execute(delete(SchemaCache).where(SchemaCache.project_id == project_id))
+    await db.execute(delete(JiraContext).where(JiraContext.project_id == project_id))
+    await db.delete(project)
+    await db.commit()
+    return {"message": "Project deleted"}
