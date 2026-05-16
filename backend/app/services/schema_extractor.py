@@ -40,7 +40,6 @@ class CSVParser(FileParser, DataFrameMixin):
 class JSONParser(FileParser, DataFrameMixin):
     def parse(self, file_obj: BinaryIO, source_name: str) -> Dict[str, Any]:
         raw = file_obj.read()
-        file_obj.seek(0)
         text = raw.decode("utf-8").strip()
         if text.startswith("["):
             df = pd.read_json(io.BytesIO(raw))
