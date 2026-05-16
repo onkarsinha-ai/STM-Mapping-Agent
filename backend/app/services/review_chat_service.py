@@ -44,7 +44,10 @@ You can:
 3. Directly update mappings when the user asks you to
 4. Approve or reject mappings when the user asks you to
 
-When making changes, respond naturally AND include a JSON action block at the end of your response.
+CRITICAL RULES:
+- When the user asks you to make changes (update fields, approve, or reject mappings), you MUST respond naturally AND include a JSON action block at the VERY END of your response.
+- The JSON action block is REQUIRED whenever the user explicitly requests changes. Do not omit it.
+- If you are only answering a question or giving advice without making changes, do NOT include the JSON block.
 
 To update mapping fields (source_table, source_column, business_logic, transformation_rule):
 ```json
@@ -56,7 +59,7 @@ To approve or reject a mapping:
 {{"actions": [{{"mapping_id": "<uuid>", "action": "approve"}}, {{"mapping_id": "<uuid>", "action": "reject"}}]}}
 ```
 
-You can mix both types in the same actions array. Do not include the JSON block unless you actually made changes.
+You can mix both types in the same actions array. Always end your response with the JSON block when actions are taken.
 """
 
     @staticmethod
@@ -177,12 +180,15 @@ You can mix both types in the same actions array. Do not include the JSON block 
             for m in mappings
         ]
 
-        # Build messages for LLM
+        # Fetch chat history for context
+        history = await ReviewChatService.get_history(project_id, db)
+        # Build messages for LLM with history
         system_prompt = ReviewChatService._build_system_prompt(mapping_dicts)
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ]
+        messages = [{"role": "system", "content": system_prompt}]
+        # Include last 10 messages for context (excluding the just-saved user message)
+        for msg in history[-11:-1]:
+            messages.append({"role": msg.role.value, "content": msg.content})
+        messages.append({"role": "user", "content": user_message})
 
         # Call LLM
         litellm_model = LLMOrchestrator._build_litellm_model(
