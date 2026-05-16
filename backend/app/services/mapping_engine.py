@@ -17,6 +17,42 @@ class MappingEngine:
         return round(min(score, 1.0), 2)
 
     @staticmethod
+    async def update_mapping_fields(mapping_id: str, modifications: dict) -> Mapping:
+        async with AsyncSessionLocal() as session:
+            mapping = await session.get(Mapping, mapping_id)
+            if not mapping:
+                raise ValueError(f"Mapping {mapping_id} not found")
+
+            original = {
+                "source_table": mapping.source_table,
+                "source_column": mapping.source_column,
+                "business_logic": mapping.business_logic,
+                "transformation_rule": mapping.transformation_rule
+            }
+
+            for key, value in modifications.items():
+                if hasattr(mapping, key):
+                    setattr(mapping, key, value)
+
+            mapping.status = MappingStatus.modified
+
+            feedback = MappingFeedback(
+                mapping_id=mapping_id,
+                user_action=UserAction.modified,
+                original_proposal=original,
+                final_state={
+                    "source_table": mapping.source_table,
+                    "source_column": mapping.source_column,
+                    "business_logic": mapping.business_logic,
+                    "transformation_rule": mapping.transformation_rule
+                }
+            )
+            session.add(feedback)
+            await session.commit()
+            await session.refresh(mapping)
+            return mapping
+
+    @staticmethod
     async def update_mapping_status(mapping_id: str, action: str,
                                     modifications: Optional[dict] = None) -> Mapping:
         async with AsyncSessionLocal() as session:
@@ -38,11 +74,7 @@ class MappingEngine:
                 mapping.status = MappingStatus.rejected
                 user_action = UserAction.rejected
             elif action == "modify" and modifications:
-                mapping.status = MappingStatus.modified
-                user_action = UserAction.modified
-                for key, value in modifications.items():
-                    if hasattr(mapping, key):
-                        setattr(mapping, key, value)
+                return await MappingEngine.update_mapping_fields(mapping_id, modifications)
             else:
                 user_action = UserAction(action) if action in ["approved", "rejected", "modified"] else UserAction.approved
 
