@@ -118,7 +118,8 @@ export function MappingTable({ projectId }: { projectId: string }) {
 
       {/* Table */}
       <div className="card overflow-hidden">
-        <table className="table-dark">
+        <div className="overflow-x-auto" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+          <table className="table-dark" style={{ minWidth: '900px' }}>
           <thead>
             <tr>
               <th>Target</th>
@@ -206,7 +207,8 @@ export function MappingTable({ projectId }: { projectId: string }) {
               )
             })}
           </tbody>
-        </table>
+          </table>
+        </div>
 
         {filtered.length === 0 && (
           <div className="text-center py-12">
