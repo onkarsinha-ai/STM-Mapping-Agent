@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { projectsApi, connectionsApi, filesApi } from '../../services/api'
 import { Database, Sparkles, Link2, Hash, Loader2, Upload, FileText, X } from 'lucide-react'
@@ -84,10 +84,20 @@ function FileUploadEntry({ entry, onRemove, color }: FileUploadEntryProps) {
 
 /* ─── Types ─── */
 
+interface SchemaColumn {
+  name: string
+  type: string
+}
+
+interface ExtractedSchema {
+  source_name: string
+  columns: SchemaColumn[]
+}
+
 interface FileEntry {
   id: string
   file: File
-  schema: any
+  schema: ExtractedSchema | null
   uploading: boolean
   error?: string
 }
@@ -107,9 +117,16 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   const [targetMode, setTargetMode] = useState<'connection' | 'file'>('connection')
   const [sourceFiles, setSourceFiles] = useState<FileEntry[]>([])
   const [targetFile, setTargetFile] = useState<FileEntry | null>(null)
+  const [error, setError] = useState<string>('')
 
   // Abort/cleanup tracking for in-flight requests
   const cancelledIds = useRef<Set<string>>(new Set())
+
+  useEffect(() => {
+    return () => {
+      cancelledIds.current.clear()
+    }
+  }, [])
 
   const queryClient = useQueryClient()
   const { data: connectionsData } = useQuery({
@@ -202,6 +219,7 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
 
   const handleCreate = async () => {
     setCreating(true)
+    setError('')
     try {
       const payload: any = {
         name,
@@ -238,7 +256,7 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
       setTargetMode('connection')
       cancelledIds.current.clear()
     } catch (e: any) {
-      alert(e.response?.data?.detail || 'Failed to create project')
+      setError(e.response?.data?.detail || 'Failed to create project')
     }
     setCreating(false)
   }
@@ -345,6 +363,9 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
                     color="cyan"
                   />
                 ))}
+                {sourceFiles.length === 0 && (
+                  <p className="text-xs text-gray-500 italic">No files selected yet. Choose files above.</p>
+                )}
               </div>
             </div>
           )}
@@ -436,6 +457,10 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
           />
         </div>
       </div>
+
+      {error && (
+        <div className="text-sm text-red-400 mb-4">{error}</div>
+      )}
 
       <div className="flex gap-3 mt-6">
         <button
