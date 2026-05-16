@@ -14,7 +14,7 @@ class ExportService:
             result = await session.execute(
                 select(Mapping).where(
                     Mapping.project_id == project_id,
-                    Mapping.status.in_([MappingStatus.approved, MappingStatus.modified])
+                    Mapping.status.in_([MappingStatus.approved, MappingStatus.modified, MappingStatus.rejected])
                 )
             )
             mappings = result.scalars().all()
@@ -47,15 +47,16 @@ class ExportService:
                 cell.fill = PatternFill(start_color="CCCCCC", end_color="CCCCCC", fill_type="solid")
 
             for row, m in enumerate(table_mappings, 2):
+                is_rejected = m.status == MappingStatus.rejected
                 ws.cell(row=row, column=1, value="target")
                 ws.cell(row=row, column=2, value=m.target_table)
                 ws.cell(row=row, column=3, value=m.target_column)
                 ws.cell(row=row, column=4, value="source")
-                ws.cell(row=row, column=5, value=m.source_table)
-                ws.cell(row=row, column=6, value=m.source_column)
-                ws.cell(row=row, column=7, value=m.business_logic)
-                ws.cell(row=row, column=8, value=m.transformation_rule)
-                ws.cell(row=row, column=9, value=float(m.confidence_score) if m.confidence_score else None)
+                ws.cell(row=row, column=5, value="USER INPUT NEEDED" if is_rejected else m.source_table)
+                ws.cell(row=row, column=6, value="USER INPUT NEEDED" if is_rejected else m.source_column)
+                ws.cell(row=row, column=7, value="USER INPUT NEEDED" if is_rejected else m.business_logic)
+                ws.cell(row=row, column=8, value="USER INPUT NEEDED" if is_rejected else m.transformation_rule)
+                ws.cell(row=row, column=9, value=0.00 if is_rejected else (float(m.confidence_score) if m.confidence_score else None))
 
             for col in range(1, len(headers) + 1):
                 ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = 20
