@@ -33,5 +33,6 @@ class Project(Base):
     user_text_input = Column(Text, nullable=True)
     source_schemas = Column(JSON, default=list, nullable=True)
     target_schema = Column(JSON, default=dict, nullable=True)
+    review_chat_completed = Column(String(10), default="false", nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
