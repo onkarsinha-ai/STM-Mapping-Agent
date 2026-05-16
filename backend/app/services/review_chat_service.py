@@ -42,14 +42,21 @@ You can:
 1. Answer questions about why a mapping was proposed
 2. Suggest better source columns or transformation logic
 3. Directly update mappings when the user asks you to
+4. Approve or reject mappings when the user asks you to
 
-When updating a mapping, respond naturally AND include a JSON action block like this:
+When making changes, respond naturally AND include a JSON action block at the end of your response.
+
+To update mapping fields (source_table, source_column, business_logic, transformation_rule):
 ```json
 {{"actions": [{{"mapping_id": "<uuid>", "updates": {{"source_column": "new_value", "business_logic": "new logic"}}}}]}}
 ```
 
-You may update these fields: source_table, source_column, business_logic, transformation_rule.
-Do not include the JSON block unless you actually made changes.
+To approve or reject a mapping:
+```json
+{{"actions": [{{"mapping_id": "<uuid>", "action": "approve"}}, {{"mapping_id": "<uuid>", "action": "reject"}}]}}
+```
+
+You can mix both types in the same actions array. Do not include the JSON block unless you actually made changes.
 """
 
     @staticmethod
@@ -83,11 +90,25 @@ Do not include the JSON block unless you actually made changes.
         applied = []
         for action in actions:
             mapping_id = action.get("mapping_id")
-            updates = action.get("updates", {})
-            if not mapping_id or not updates:
+            if not mapping_id:
                 continue
 
-            # Filter to allowed fields
+            # Handle status changes (approve / reject)
+            status_action = action.get("action")
+            if status_action in ("approve", "approved", "reject", "rejected"):
+                normalized = "approved" if status_action in ("approve", "approved") else "rejected"
+                try:
+                    await MappingEngine.update_mapping_status(mapping_id, normalized)
+                    applied.append({"mapping_id": mapping_id, "action": normalized})
+                except Exception as e:
+                    logging.warning(f"Failed to apply mapping status change for {mapping_id}: {e}")
+                continue
+
+            # Handle field updates
+            updates = action.get("updates", {})
+            if not updates:
+                continue
+
             allowed = {"source_table", "source_column", "business_logic", "transformation_rule"}
             modifications = {k: v for k, v in updates.items() if k in allowed}
             if not modifications:

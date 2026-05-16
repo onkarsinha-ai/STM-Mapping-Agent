@@ -67,6 +67,9 @@ def test_build_system_prompt_with_mappings():
     assert "users.id" in prompt
     assert "Direct map" in prompt
     assert "mapping review assistant" in prompt.lower()
+    assert "approve" in prompt.lower()
+    assert "reject" in prompt.lower()
+    assert '"action":' in prompt
 
 
 def test_build_system_prompt_empty_mappings():
@@ -90,3 +93,42 @@ def test_parse_actions_from_response_with_actions():
     assert len(actions) == 1
     assert actions[0]["mapping_id"] == "map-1"
     assert actions[0]["updates"]["source_column"] == "user_id"
+
+
+@pytest.mark.asyncio
+async def test_apply_mapping_actions_approve():
+    with patch("app.services.review_chat_service.MappingEngine") as mock_engine:
+        mock_engine.update_mapping_status = AsyncMock(return_value=None)
+        actions = [{"mapping_id": "map-1", "action": "approve"}]
+        applied = await ReviewChatService._apply_mapping_actions(actions)
+        assert len(applied) == 1
+        assert applied[0]["mapping_id"] == "map-1"
+        assert applied[0]["action"] == "approved"
+        mock_engine.update_mapping_status.assert_awaited_once_with("map-1", "approved")
+
+
+@pytest.mark.asyncio
+async def test_apply_mapping_actions_reject():
+    with patch("app.services.review_chat_service.MappingEngine") as mock_engine:
+        mock_engine.update_mapping_status = AsyncMock(return_value=None)
+        actions = [{"mapping_id": "map-2", "action": "reject"}]
+        applied = await ReviewChatService._apply_mapping_actions(actions)
+        assert len(applied) == 1
+        assert applied[0]["mapping_id"] == "map-2"
+        assert applied[0]["action"] == "rejected"
+        mock_engine.update_mapping_status.assert_awaited_once_with("map-2", "rejected")
+
+
+@pytest.mark.asyncio
+async def test_apply_mapping_actions_mixed():
+    with patch("app.services.review_chat_service.MappingEngine") as mock_engine:
+        mock_engine.update_mapping_status = AsyncMock(return_value=None)
+        mock_engine.update_mapping_fields = AsyncMock(return_value=None)
+        actions = [
+            {"mapping_id": "map-1", "action": "reject"},
+            {"mapping_id": "map-2", "updates": {"source_column": "new_col"}}
+        ]
+        applied = await ReviewChatService._apply_mapping_actions(actions)
+        assert len(applied) == 2
+        mock_engine.update_mapping_status.assert_awaited_once_with("map-1", "rejected")
+        mock_engine.update_mapping_fields.assert_awaited_once_with("map-2", {"source_column": "new_col"})
