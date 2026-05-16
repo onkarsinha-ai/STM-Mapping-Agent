@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Text, Enum, ForeignKey, DateTime, Uuid
+from sqlalchemy import Column, String, Text, Enum, ForeignKey, DateTime, Uuid, JSON
 from app.database import Base
 import enum
 
@@ -31,5 +31,7 @@ class Project(Base):
     llm_connection_id = Column(Uuid(as_uuid=False), ForeignKey("connections.id"), nullable=True)
     jira_ticket_key = Column(String(50), nullable=True)
     user_text_input = Column(Text, nullable=True)
+    source_schemas = Column(JSON, default=list, nullable=True)
+    target_schema = Column(JSON, default=dict, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

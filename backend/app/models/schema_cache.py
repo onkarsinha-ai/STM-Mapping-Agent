@@ -14,7 +14,7 @@ class SchemaCache(Base):
     __tablename__ = "schema_cache"
 
     id = Column(Uuid(as_uuid=False), primary_key=True, default=uuid.uuid4)
-    connection_id = Column(Uuid(as_uuid=False), ForeignKey("connections.id"), nullable=False)
+    connection_id = Column(Uuid(as_uuid=False), ForeignKey("connections.id"), nullable=True)
     project_id = Column(Uuid(as_uuid=False), ForeignKey("projects.id"), nullable=False)
     object_type = Column(Enum(ObjectType), nullable=False)
     schema_name = Column(String(255), nullable=True)
