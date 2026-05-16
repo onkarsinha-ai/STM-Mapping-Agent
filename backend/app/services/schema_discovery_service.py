@@ -84,10 +84,10 @@ class SchemaDiscoveryService:
             return tree
 
     @staticmethod
-    async def insert_inline_schema(project_id: str, schema_data: dict, is_target: bool = False) -> List[SchemaCache]:
+    async def insert_inline_schema(project_id: str, schema_data: Dict[str, Any], is_target: bool = False) -> List[SchemaCache]:
         source_name = schema_data.get("source_name", "inline")
         schema_name = "target" if is_target else source_name
-        table_name = source_name.split(".")[0] if "." in source_name else source_name
+        table_name = source_name.rsplit(".", 1)[0] if "." in source_name else source_name
 
         entries = []
         for col in schema_data.get("columns", []):
@@ -104,8 +104,7 @@ class SchemaDiscoveryService:
             entries.append(entry)
 
         async with AsyncSessionLocal() as session:
-            for entry in entries:
-                session.add(entry)
+            session.add_all(entries)
             await session.commit()
 
         return entries
