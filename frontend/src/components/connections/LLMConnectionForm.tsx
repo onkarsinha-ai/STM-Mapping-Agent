@@ -27,23 +27,48 @@ const DEFAULT_BASE_URLS: Record<string, string> = {
   kimi: 'https://api.moonshot.cn/v1',
 }
 
-export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [provider, setProvider] = useState('openai')
-  const [params, setParams] = useState<Record<string, any>>({
-    model: 'gpt-4o',
-    api_key: '',
-    base_url: 'https://api.openai.com/v1',
+export function LLMConnectionForm({ onSuccess, editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
+  const isEditing = !!editingConnection
+
+  const [name, setName] = useState(editingConnection?.name || '')
+  const [description, setDescription] = useState(editingConnection?.description || '')
+  const [provider, setProvider] = useState(editingConnection?.provider || 'openai')
+  const [params, setParams] = useState<Record<string, any>>(() => {
+    const providerValue = editingConnection?.provider || 'openai'
+    const providerInfo = LLM_PROVIDERS.find(p => p.value === providerValue)
+    const defaultUrl = DEFAULT_BASE_URLS[providerValue] || ''
+    const savedMetadata = editingConnection?.metadata
+    const savedModel = savedMetadata?.model
+    const hasValidSavedModel = savedModel && (providerInfo?.models.includes(savedModel) || providerInfo?.models.length === 0)
+    if (savedMetadata && hasValidSavedModel) {
+      return {
+        model: savedModel,
+        api_key: '',
+        base_url: savedMetadata.base_url || defaultUrl,
+        ...savedMetadata,
+      }
+    }
+    return {
+      model: providerInfo?.models[0] || '',
+      api_key: '',
+      base_url: defaultUrl,
+    }
   })
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
   const [testing, setTesting] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [customEndpoint, setCustomEndpoint] = useState(false)
+  const [customEndpoint, setCustomEndpoint] = useState(() => {
+    if (editingConnection?.metadata?.base_url) {
+      const defaultUrl = DEFAULT_BASE_URLS[editingConnection?.provider] || ''
+      return editingConnection.metadata.base_url !== defaultUrl
+    }
+    return false
+  })
 
   const providerInfo = LLM_PROVIDERS.find(p => p.value === provider)
 
   useEffect(() => {
+    if (isEditing) return
     const defaultUrl = DEFAULT_BASE_URLS[provider] || ''
     setParams(prev => ({
       ...prev,
@@ -53,7 +78,7 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
     }))
     setCustomEndpoint(false)
     setTestResult(null)
-  }, [provider])
+  }, [provider, isEditing])
 
   const updateParam = (key: string, value: any) => {
     setParams(prev => ({ ...prev, [key]: value }))
@@ -99,16 +124,23 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
   const handleSave = async () => {
     setSaving(true)
     try {
-      await connectionsApi.create({
+      const payload = {
         name,
         connection_type: 'llm',
         provider,
         params: buildApiParams()
-      })
+      }
+      if (isEditing) {
+        await connectionsApi.update(editingConnection.id, payload)
+      } else {
+        await connectionsApi.create(payload)
+      }
       onSuccess()
-      setName('')
-      setDescription('')
-      setTestResult(null)
+      if (!isEditing) {
+        setName('')
+        setDescription('')
+        setTestResult(null)
+      }
     } catch (e: any) {
       alert(getErrorMessage(e))
     }
@@ -257,13 +289,13 @@ export function LLMConnectionForm({ onSuccess }: { onSuccess: () => void }) {
         <button
           type="button"
           onClick={handleSave}
-          disabled={saving || !testResult?.success || !name}
+          disabled={saving || (!isEditing && !testResult?.success) || !name}
           className="btn-primary"
         >
           {saving ? (
-            <><Loader2 size={16} className="animate-spin" /> Saving...</>
+            <><Loader2 size={16} className="animate-spin" /> {isEditing ? 'Updating...' : 'Saving...'}</>
           ) : (
-            <><Save size={16} /> Save Connection</>
+            <><Save size={16} /> {isEditing ? 'Update Connection' : 'Save Connection'}</>
           )}
         </button>
       </div>

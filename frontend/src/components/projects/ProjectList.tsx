@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { projectsApi } from '../../services/api'
-import { ArrowRight, FolderOpen, GitBranch, Database, Sparkles } from 'lucide-react'
+import { ArrowRight, FolderOpen, GitBranch, Database, Sparkles, Trash2 } from 'lucide-react'
 
 const phaseIcons: Record<string, React.ReactNode> = {
   input: <Sparkles size={14} />,
@@ -25,11 +26,13 @@ const statusColors: Record<string, { bg: string; text: string }> = {
   archived: { bg: 'var(--bg-surface-hover)', text: 'var(--text-muted)' },
 }
 
-export function ProjectList() {
+export function ProjectList({ onDelete }: { onDelete?: () => void }) {
   const { data, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectsApi.list()
   })
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteResult, setDeleteResult] = useState<{ id: string; success: boolean; message: string } | null>(null)
 
   if (isLoading) {
     return (
@@ -71,54 +74,96 @@ export function ProjectList() {
         const phaseStyle = phaseColors[project.current_phase] || phaseColors.input
         const statusStyle = statusColors[project.status] || statusColors.active
         return (
-          <Link
-            key={project.id}
-            to={`/projects/${project.id}`}
-            className="card card-glow p-5 group"
-          >
+          <div key={project.id} className="card card-glow p-5 group relative">
             <div className="flex items-start justify-between mb-4">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: 'var(--accent-soft)' }}
-              >
-                <FolderOpen size={20} style={{ color: 'var(--accent)' }} />
+              <Link to={`/projects/${project.id}`} className="flex items-center gap-3 flex-1">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: 'var(--accent-soft)' }}
+                >
+                  <FolderOpen size={20} style={{ color: 'var(--accent)' }} />
+                </div>
+              </Link>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    if (!window.confirm('Are you sure you want to delete this project?')) return
+                    setDeletingId(project.id)
+                    setDeleteResult(null)
+                    try {
+                      await projectsApi.delete(project.id)
+                      onDelete?.()
+                      setDeleteResult({ id: project.id, success: true, message: 'Deleted' })
+                    } catch (err: any) {
+                      setDeleteResult({ id: project.id, success: false, message: err.response?.data?.detail || 'Delete failed' })
+                    } finally {
+                      setDeletingId(null)
+                    }
+                  }}
+                  disabled={deletingId === project.id}
+                  className="p-2 rounded-md transition-colors disabled:opacity-50"
+                  style={{ color: 'var(--text-muted)' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--error)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+                  title="Delete project"
+                >
+                  {deletingId === project.id ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Trash2 size={16} />
+                  )}
+                </button>
+                <Link to={`/projects/${project.id}`}>
+                  <ArrowRight
+                    size={18}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ color: 'var(--text-muted)' }}
+                  />
+                </Link>
               </div>
-              <ArrowRight
-                size={18}
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ color: 'var(--text-muted)' }}
-              />
             </div>
 
-            <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--text-primary)' }}>
-              {project.name}
-            </h3>
-            <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--text-muted)' }}>
-              {project.description || 'No description'}
-            </p>
+            <Link to={`/projects/${project.id}`}>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--text-primary)' }}>
+                {project.name}
+              </h3>
+              <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--text-muted)' }}>
+                {project.description || 'No description'}
+              </p>
+            </Link>
 
-            <div className="flex items-center gap-2">
-              <span
-                className="badge"
-                style={{
-                  backgroundColor: phaseStyle.bg,
-                  color: phaseStyle.text,
-                }}
-              >
-                {phaseIcons[project.current_phase]}
-                <span className="capitalize">{project.current_phase}</span>
+            {deleteResult && deleteResult.id === project.id && (
+              <span className={`text-xs block mb-2 ${deleteResult.success ? 'text-green-500' : 'text-red-500'}`}>
+                {deleteResult.message}
               </span>
-              <span
-                className="badge"
-                style={{
-                  backgroundColor: statusStyle.bg,
-                  color: statusStyle.text,
-                }}
-              >
-                <span className="capitalize">{project.status}</span>
-              </span>
-            </div>
-          </Link>
+            )}
+
+            <Link to={`/projects/${project.id}`}>
+              <div className="flex items-center gap-2">
+                <span
+                  className="badge"
+                  style={{
+                    backgroundColor: phaseStyle.bg,
+                    color: phaseStyle.text,
+                  }}
+                >
+                  {phaseIcons[project.current_phase]}
+                  <span className="capitalize">{project.current_phase}</span>
+                </span>
+                <span
+                  className="badge"
+                  style={{
+                    backgroundColor: statusStyle.bg,
+                    color: statusStyle.text,
+                  }}
+                >
+                  <span className="capitalize">{project.status}</span>
+                </span>
+              </div>
+            </Link>
+          </div>
         )
       })}
     </div>

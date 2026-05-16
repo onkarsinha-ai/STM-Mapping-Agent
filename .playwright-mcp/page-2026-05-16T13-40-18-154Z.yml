@@ -1,0 +1,59 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e49]:
+              - heading "LLM Chat" [level=2] [ref=e50]
+              - paragraph [ref=e51]: Test your LLM connections with direct messages
+          - generic [ref=e52]:
+            - generic [ref=e69]: "Using:"
+            - combobox [ref=e70]:
+              - option "gemini-ii (gemini)" [selected]
+              - option "grmini-fixed-again (gemini)"
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e72]:
+              - img [ref=e74]
+              - generic [ref=e77]: Say hello and tell me what model you are
+            - generic [ref=e78]:
+              - img [ref=e80]
+              - generic [ref=e83]: Hello! I am a large language model, trained by Google.
+          - generic [ref=e63]:
+            - textbox "Type a message..." [ref=e71]
+            - button [disabled] [ref=e65]:
+              - img [ref=e84]

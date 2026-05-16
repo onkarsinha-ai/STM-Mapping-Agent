@@ -1,0 +1,112 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e259]:
+        - generic [ref=e260]:
+          - generic [ref=e261]:
+            - img [ref=e263]
+            - generic [ref=e265]:
+              - heading "Projects" [level=2] [ref=e266]
+              - paragraph [ref=e267]: Manage your data mapping projects
+          - button "Cancel" [active] [ref=e298] [cursor=pointer]:
+            - img [ref=e269]
+            - text: Cancel
+        - generic [ref=e300]:
+          - generic [ref=e301]:
+            - img [ref=e303]
+            - generic [ref=e305]:
+              - heading "New Mapping Project" [level=3] [ref=e306]
+              - paragraph [ref=e307]: Configure source, target, and LLM connections
+          - generic [ref=e308]:
+            - generic [ref=e309]:
+              - generic [ref=e310]: Project Name
+              - textbox "Customer DWH Mapping" [ref=e311]
+            - generic [ref=e312]:
+              - generic [ref=e313]: Description
+              - textbox "Brief description..." [ref=e314]
+          - generic [ref=e315]:
+            - generic [ref=e316]:
+              - generic [ref=e318]:
+                - img [ref=e319]
+                - text: Source
+              - generic [ref=e323]:
+                - button "Connection" [ref=e324] [cursor=pointer]
+                - button "Upload File(s)" [ref=e325] [cursor=pointer]
+              - combobox [ref=e326]:
+                - option "Select source..." [selected]
+            - generic [ref=e327]:
+              - generic [ref=e329]:
+                - img [ref=e330]
+                - text: Target
+              - generic [ref=e334]:
+                - button "Connection" [ref=e335] [cursor=pointer]
+                - button "Upload File" [ref=e336] [cursor=pointer]
+              - combobox [ref=e337]:
+                - option "Select target..." [selected]
+          - generic [ref=e338]:
+            - generic [ref=e339]:
+              - generic [ref=e341]:
+                - img [ref=e342]
+                - text: LLM Connection
+              - combobox [ref=e344]:
+                - option "Select LLM..." [selected]
+                - option "gemini-ii"
+                - option "grmini-fixed-again"
+            - generic [ref=e345]:
+              - generic [ref=e347]:
+                - img [ref=e348]
+                - text: Jira Ticket (optional)
+              - textbox "PROJ-123" [ref=e351]
+          - button "Create Project" [disabled] [ref=e353]:
+            - img [ref=e354]
+            - text: Create Project
+        - generic [ref=e271]:
+          - generic [ref=e272]:
+            - link [ref=e273] [cursor=pointer]:
+              - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+              - img [ref=e275]
+            - generic [ref=e277]:
+              - button "Delete project" [ref=e278] [cursor=pointer]:
+                - img [ref=e279]
+              - link [ref=e282] [cursor=pointer]:
+                - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+                - img [ref=e283]
+          - link "E2E Test Project End-to-end verification project" [ref=e285] [cursor=pointer]:
+            - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+            - heading "E2E Test Project" [level=3] [ref=e286]
+            - paragraph [ref=e287]: End-to-end verification project
+          - link "discovery active" [ref=e288] [cursor=pointer]:
+            - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+            - generic [ref=e289]:
+              - generic [ref=e290]:
+                - img [ref=e291]
+                - generic [ref=e295]: discovery
+              - generic [ref=e297]: active

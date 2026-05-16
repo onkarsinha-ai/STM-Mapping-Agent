@@ -1,0 +1,90 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e49]:
+              - heading "Projects" [level=2] [ref=e50]
+              - paragraph [ref=e51]: Manage your data mapping projects
+          - button "New Project" [ref=e52] [cursor=pointer]:
+            - img [ref=e53]
+            - text: New Project
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - link [ref=e57] [cursor=pointer]:
+                - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+                - img [ref=e59]
+              - generic [ref=e61]:
+                - button "Delete project" [ref=e62] [cursor=pointer]:
+                  - img [ref=e63]
+                - link [ref=e66] [cursor=pointer]:
+                  - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+                  - img [ref=e67]
+            - link "E2E Test Project End-to-end verification project" [ref=e69] [cursor=pointer]:
+              - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+              - heading "E2E Test Project" [level=3] [ref=e70]
+              - paragraph [ref=e71]: End-to-end verification project
+            - link "propose active" [ref=e72] [cursor=pointer]:
+              - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - img [ref=e75]
+                  - generic [ref=e79]: propose
+                - generic [ref=e81]: active
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - link [ref=e84] [cursor=pointer]:
+                - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+                - img [ref=e86]
+              - generic [ref=e88]:
+                - button "Delete project" [ref=e89] [cursor=pointer]:
+                  - img [ref=e90]
+                - link [ref=e93] [cursor=pointer]:
+                  - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+                  - img [ref=e94]
+            - link "Testing No description" [ref=e96] [cursor=pointer]:
+              - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+              - heading "Testing" [level=3] [ref=e97]
+              - paragraph [ref=e98]: No description
+            - link "propose active" [ref=e99] [cursor=pointer]:
+              - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - img [ref=e102]
+                  - generic [ref=e106]: propose
+                - generic [ref=e108]: active

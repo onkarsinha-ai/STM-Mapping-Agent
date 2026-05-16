@@ -14,7 +14,7 @@ const AUTH_METHODS_SERVER = [
   { value: 'oauth1', label: 'OAuth 1.0a' },
 ]
 
-export function JiraConnectionForm({ onSuccess }: { onSuccess: () => void }) {
+export function JiraConnectionForm({ onSuccess, editingConnection: _editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [instanceType, setInstanceType] = useState('jira_cloud')

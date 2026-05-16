@@ -1,0 +1,149 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e44]
+            - generic [ref=e48]:
+              - heading "Connections" [level=2] [ref=e49]
+              - paragraph [ref=e50]: Manage database, LLM, and Jira connections
+          - button "Cancel" [ref=e139] [cursor=pointer]:
+            - img [ref=e52]
+            - text: Cancel
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - button "Database" [disabled] [ref=e143]:
+              - img [ref=e144]
+              - text: Database
+            - button "LLM Model" [disabled] [ref=e148]:
+              - img [ref=e149]
+              - text: LLM Model
+            - button "Jira" [disabled] [ref=e151]:
+              - img [ref=e152]
+              - text: Jira
+          - generic [ref=e155]:
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - generic [ref=e159]: Connection Name *
+                - textbox "Production Postgres" [ref=e160]: gemini
+              - generic [ref=e161]:
+                - generic [ref=e162]: Description
+                - textbox "Optional description" [ref=e163]
+            - generic [ref=e164]:
+              - generic [ref=e165]: Provider *
+              - combobox [ref=e166]:
+                - option "OpenAI"
+                - option "Anthropic"
+                - option "Azure OpenAI"
+                - option "Local / Self-Hosted"
+                - option "Ollama"
+                - option "Groq"
+                - option "Cohere"
+                - option "Google Gemini" [selected]
+                - option "Kimi (Moonshot AI)"
+            - generic [ref=e168]:
+              - generic [ref=e169]: Model *
+              - combobox [ref=e170]:
+                - option "gemini-2.5-flash" [selected]
+                - option "gemini-2.5-pro"
+                - option "gemini-2.0-flash"
+                - option "gemini-1.5-pro"
+                - option "Custom..."
+            - generic [ref=e171]:
+              - generic [ref=e172]: API Key *
+              - textbox "sk-..." [ref=e173]
+            - generic [ref=e174]:
+              - button "Test Connection" [ref=e175] [cursor=pointer]:
+                - img [ref=e176]
+                - text: Test Connection
+              - button "Update Connection" [ref=e178] [cursor=pointer]:
+                - img [ref=e179]
+                - text: Update Connection
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - button "All" [ref=e56] [cursor=pointer]
+            - button "Databases" [ref=e57] [cursor=pointer]
+            - button "LLMs" [ref=e58] [cursor=pointer]
+            - button "Jira" [ref=e59] [cursor=pointer]
+          - table [ref=e61]:
+            - rowgroup [ref=e62]:
+              - row "Name Type Flavor" [ref=e63]:
+                - columnheader "Name" [ref=e64]
+                - columnheader "Type" [ref=e65]
+                - columnheader "Flavor" [ref=e66]
+                - columnheader [ref=e67]
+            - rowgroup [ref=e68]:
+              - row "Local PostgreSQL source postgresql" [ref=e69]:
+                - cell "Local PostgreSQL" [ref=e70]
+                - cell "source" [ref=e71]:
+                  - generic [ref=e72]:
+                    - img [ref=e74]
+                    - generic [ref=e78]: source
+                - cell "postgresql" [ref=e79]
+                - cell [ref=e80]:
+                  - generic [ref=e81]:
+                    - button "Test connection" [ref=e82] [cursor=pointer]:
+                      - img [ref=e83]
+                    - button [ref=e85] [cursor=pointer]:
+                      - img [ref=e86]
+                    - button [ref=e89] [cursor=pointer]:
+                      - img [ref=e90]
+              - row "Target PostgreSQL target postgresql" [ref=e93]:
+                - cell "Target PostgreSQL" [ref=e94]
+                - cell "target" [ref=e95]:
+                  - generic [ref=e96]:
+                    - img [ref=e98]
+                    - generic [ref=e102]: target
+                - cell "postgresql" [ref=e103]
+                - cell [ref=e104]:
+                  - generic [ref=e105]:
+                    - button "Test connection" [ref=e106] [cursor=pointer]:
+                      - img [ref=e107]
+                    - button [ref=e109] [cursor=pointer]:
+                      - img [ref=e110]
+                    - button [ref=e113] [cursor=pointer]:
+                      - img [ref=e114]
+              - row "gemini llm gemini" [ref=e117]:
+                - cell "gemini" [ref=e118]
+                - cell "llm" [ref=e119]:
+                  - generic [ref=e120]:
+                    - img [ref=e122]
+                    - generic [ref=e124]: llm
+                - cell "gemini" [ref=e125]
+                - cell [ref=e126]:
+                  - generic [ref=e127]:
+                    - button "Test connection" [ref=e128] [cursor=pointer]:
+                      - img [ref=e129]
+                    - button [ref=e131] [cursor=pointer]:
+                      - img [ref=e132]
+                    - button [ref=e135] [cursor=pointer]:
+                      - img [ref=e136]

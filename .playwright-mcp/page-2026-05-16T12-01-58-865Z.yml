@@ -1,0 +1,82 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e154]:
+        - generic [ref=e155]:
+          - link "Back to Projects" [ref=e156] [cursor=pointer]:
+            - /url: /
+            - img [ref=e157]
+            - text: Back to Projects
+          - generic [ref=e159]:
+            - img [ref=e161]
+            - generic [ref=e163]:
+              - heading "E2E Test Project" [level=2] [ref=e164]
+              - paragraph [ref=e165]: End-to-end verification project
+        - generic [ref=e167]:
+          - generic [ref=e169]:
+            - button [ref=e170] [cursor=pointer]:
+              - img [ref=e171]
+            - generic [ref=e173]: Configure
+          - generic [ref=e176]:
+            - button "2" [ref=e177] [cursor=pointer]:
+              - generic [ref=e178]: "2"
+            - generic [ref=e179]: Discovery
+          - generic [ref=e182]:
+            - button "3" [ref=e183] [cursor=pointer]:
+              - generic [ref=e184]: "3"
+            - generic [ref=e185]: Propose
+          - generic [ref=e188]:
+            - button "4" [ref=e189] [cursor=pointer]:
+              - generic [ref=e190]: "4"
+            - generic [ref=e191]: Review
+          - generic [ref=e194]:
+            - button "5" [ref=e195] [cursor=pointer]:
+              - generic [ref=e196]: "5"
+            - generic [ref=e197]: Export
+        - generic [ref=e198]:
+          - generic [ref=e199]:
+            - heading "Schema Discovery" [level=3] [ref=e200]
+            - generic [ref=e201]: Live
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - button "inline (1 tables)" [active] [ref=e204] [cursor=pointer]:
+                - img [ref=e215]
+                - generic [ref=e207]: inline
+                - generic [ref=e208]: (1 tables)
+              - button "inline (8 columns)" [ref=e219] [cursor=pointer]:
+                - img [ref=e220]
+                - img [ref=e222]
+                - generic [ref=e224]: inline
+                - generic [ref=e225]: (8 columns)
+            - button "target (1 tables)" [ref=e210] [cursor=pointer]:
+              - img [ref=e211]
+              - generic [ref=e213]: target
+              - generic [ref=e214]: (1 tables)

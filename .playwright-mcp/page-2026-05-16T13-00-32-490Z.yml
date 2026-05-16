@@ -1,0 +1,148 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - link "Back to Projects" [ref=e43] [cursor=pointer]:
+            - /url: /
+            - img [ref=e44]
+            - text: Back to Projects
+          - generic [ref=e46]:
+            - img [ref=e48]
+            - generic [ref=e50]:
+              - heading "E2E Test Project" [level=2] [ref=e51]
+              - paragraph [ref=e52]: End-to-end verification project
+        - generic [ref=e54]:
+          - generic [ref=e56]:
+            - button [ref=e57] [cursor=pointer]:
+              - img [ref=e58]
+            - generic [ref=e60]: Configure
+          - generic [ref=e63]:
+            - button [ref=e64] [cursor=pointer]:
+              - img [ref=e65]
+            - generic [ref=e67]: Discovery
+          - generic [ref=e70]:
+            - button "3" [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]: "3"
+            - generic [ref=e73]: Propose
+          - generic [ref=e76]:
+            - button "4" [ref=e77] [cursor=pointer]:
+              - generic [ref=e78]: "4"
+            - generic [ref=e79]: Review
+          - generic [ref=e82]:
+            - button "5" [ref=e83]:
+              - generic [ref=e84]: "5"
+            - generic [ref=e85]: Export
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - heading "Review Mappings" [level=3] [ref=e88]
+            - generic [ref=e89]: Review Required
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - img [ref=e93]
+                - button "All3" [ref=e95] [cursor=pointer]
+                - button "Proposed2" [ref=e96] [cursor=pointer]
+                - button "Approved1" [ref=e97] [cursor=pointer]
+                - button "Rejected0" [ref=e98] [cursor=pointer]
+              - button "Export Excel" [ref=e99] [cursor=pointer]:
+                - img [ref=e100]
+                - text: Export Excel
+            - table [ref=e104]:
+              - rowgroup [ref=e105]:
+                - row "Target Source Logic Confidence Status Actions" [ref=e106]:
+                  - columnheader "Target" [ref=e107]
+                  - columnheader "Source" [ref=e108]
+                  - columnheader "Logic" [ref=e109]
+                  - columnheader "Confidence" [ref=e110]
+                  - columnheader "Status" [ref=e111]
+                  - columnheader "Actions" [ref=e112]
+              - rowgroup [ref=e113]:
+                - row "inline full_name inline full_name - 85% proposed" [ref=e114]:
+                  - cell "inline full_name" [ref=e115]:
+                    - generic [ref=e116]: inline
+                    - generic [ref=e117]: full_name
+                  - cell "inline full_name" [ref=e118]:
+                    - generic [ref=e119]:
+                      - generic [ref=e120]: inline
+                      - generic [ref=e121]: full_name
+                  - cell "-" [ref=e122]:
+                    - generic [ref=e123]: "-"
+                  - cell "85%" [ref=e124]:
+                    - generic [ref=e125]: 85%
+                  - cell "proposed" [ref=e126]:
+                    - generic [ref=e127]: proposed
+                  - cell [ref=e128]:
+                    - generic [ref=e129]:
+                      - button "Approve" [ref=e130] [cursor=pointer]:
+                        - img [ref=e131]
+                      - button "Reject" [ref=e133] [cursor=pointer]:
+                        - img [ref=e134]
+                - row "inline total_spend inline total_spend - 85% proposed" [ref=e137]:
+                  - cell "inline total_spend" [ref=e138]:
+                    - generic [ref=e139]: inline
+                    - generic [ref=e140]: total_spend
+                  - cell "inline total_spend" [ref=e141]:
+                    - generic [ref=e142]:
+                      - generic [ref=e143]: inline
+                      - generic [ref=e144]: total_spend
+                  - cell "-" [ref=e145]:
+                    - generic [ref=e146]: "-"
+                  - cell "85%" [ref=e147]:
+                    - generic [ref=e148]: 85%
+                  - cell "proposed" [ref=e149]:
+                    - generic [ref=e150]: proposed
+                  - cell [ref=e151]:
+                    - generic [ref=e152]:
+                      - button "Approve" [ref=e153] [cursor=pointer]:
+                        - img [ref=e154]
+                      - button "Reject" [ref=e156] [cursor=pointer]:
+                        - img [ref=e157]
+                - row "inline customer_id inline customer_id - 85% approved" [ref=e160]:
+                  - cell "inline customer_id" [ref=e161]:
+                    - generic [ref=e162]: inline
+                    - generic [ref=e163]: customer_id
+                  - cell "inline customer_id" [ref=e164]:
+                    - generic [ref=e165]:
+                      - generic [ref=e166]: inline
+                      - generic [ref=e167]: customer_id
+                  - cell "-" [ref=e168]:
+                    - generic [ref=e169]: "-"
+                  - cell "85%" [ref=e170]:
+                    - generic [ref=e171]: 85%
+                  - cell "approved" [ref=e172]:
+                    - generic [ref=e173]: approved
+                  - cell [ref=e174]:
+                    - generic [ref=e175]:
+                      - button "Approve" [ref=e176] [cursor=pointer]:
+                        - img [ref=e177]
+                      - button "Reject" [ref=e179] [cursor=pointer]:
+                        - img [ref=e180]

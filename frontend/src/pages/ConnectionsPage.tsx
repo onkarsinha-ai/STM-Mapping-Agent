@@ -7,10 +7,33 @@ import { Database, Plus } from 'lucide-react'
 export function ConnectionsPage() {
   const queryClient = useQueryClient()
   const [showForm, setShowForm] = useState(false)
+  const [editingConnection, setEditingConnection] = useState<any>(null)
 
   const handleSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ['connections'] })
     setShowForm(false)
+    setEditingConnection(null)
+  }
+
+  const handleDelete = () => {
+    queryClient.invalidateQueries({ queryKey: ['connections'] })
+    setShowForm(false)
+    setEditingConnection(null)
+  }
+
+  const handleEdit = (conn: any) => {
+    setEditingConnection(conn)
+    setShowForm(true)
+  }
+
+  const handleToggleForm = () => {
+    if (showForm) {
+      setShowForm(false)
+      setEditingConnection(null)
+    } else {
+      setShowForm(true)
+      setEditingConnection(null)
+    }
   }
 
   return (
@@ -34,7 +57,7 @@ export function ConnectionsPage() {
           </div>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleToggleForm}
           className="btn-primary"
         >
           <Plus size={16} />
@@ -44,11 +67,11 @@ export function ConnectionsPage() {
 
       {showForm && (
         <div className="mb-8 animate-slide-up">
-          <ConnectionForm onSuccess={handleSuccess} />
+          <ConnectionForm onSuccess={handleSuccess} editingConnection={editingConnection} />
         </div>
       )}
 
-      <ConnectionList onDelete={handleSuccess} />
+      <ConnectionList onDelete={handleDelete} onEdit={handleEdit} />
     </div>
   )
 }

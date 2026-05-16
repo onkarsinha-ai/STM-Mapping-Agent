@@ -1,0 +1,11 @@
+customer_id,first_name,last_name,email,phone,registration_date,country,status
+1001,John,Smith,john.smith@email.com,+1-555-0101,2023-01-15,USA,active
+1002,Sarah,Johnson,sarah.j@email.com,+1-555-0102,2023-02-20,USA,active
+1003,Michael,Brown,m.brown@email.com,+44-555-0103,2023-03-10,UK,active
+1004,Emily,Davis,emily.d@email.com,+1-555-0104,2023-04-05,USA,inactive
+1005,David,Wilson,david.w@email.com,+61-555-0105,2023-05-12,Australia,active
+1006,Jessica,Miller,jess.m@email.com,+1-555-0106,2023-06-18,Canada,active
+1007,Robert,Taylor,r.taylor@email.com,+44-555-0107,2023-07-22,UK,inactive
+1008,Lisa,Anderson,lisa.a@email.com,+1-555-0108,2023-08-30,USA,active
+1009,James,Thomas,james.t@email.com,+49-555-0109,2023-09-14,Germany,active
+1010,Jennifer,Jackson,jen.j@email.com,+1-555-0110,2023-10-01,USA,active

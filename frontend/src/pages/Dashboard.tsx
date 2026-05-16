@@ -1,10 +1,16 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { ProjectWizard } from '../components/projects/ProjectWizard'
 import { ProjectList } from '../components/projects/ProjectList'
 import { Plus, FolderKanban } from 'lucide-react'
 
 export function Dashboard() {
+  const queryClient = useQueryClient()
   const [showWizard, setShowWizard] = useState(false)
+
+  const handleDelete = () => {
+    queryClient.invalidateQueries({ queryKey: ['projects'] })
+  }
 
   return (
     <div className="animate-slide-up max-w-6xl mx-auto">
@@ -43,7 +49,7 @@ export function Dashboard() {
       )}
 
       {/* Project List */}
-      <ProjectList />
+      <ProjectList onDelete={handleDelete} />
     </div>
   )
 }

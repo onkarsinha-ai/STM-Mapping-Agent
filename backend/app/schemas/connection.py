@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import Optional, Dict, Any
 from app.models.connection import ConnectionType, DBType
@@ -19,6 +19,7 @@ class ConnectionResponse(BaseModel):
     db_type: Optional[str]
     provider: Optional[str]
     is_tested: bool
+    metadata: Optional[Dict[str, Any]] = Field(None, validation_alias="connection_metadata")
 
     class Config:
         from_attributes = True

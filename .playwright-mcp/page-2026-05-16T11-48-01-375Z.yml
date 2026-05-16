@@ -1,0 +1,96 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e44]
+            - generic [ref=e46]:
+              - heading "Projects" [level=2] [ref=e47]
+              - paragraph [ref=e48]: Manage your data mapping projects
+          - button "Cancel" [ref=e58] [cursor=pointer]:
+            - img [ref=e50]
+            - text: Cancel
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - img [ref=e63]
+            - generic [ref=e65]:
+              - heading "New Mapping Project" [level=3] [ref=e66]
+              - paragraph [ref=e67]: Configure source, target, and LLM connections
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]: Project Name
+              - textbox "Customer DWH Mapping" [ref=e71]: Test Project
+            - generic [ref=e72]:
+              - generic [ref=e73]: Description
+              - textbox "Brief description..." [ref=e74]
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e78]:
+                - img [ref=e79]
+                - text: Source
+              - generic [ref=e83]:
+                - button "Connection" [ref=e84] [cursor=pointer]
+                - button "Upload File(s)" [active] [ref=e85] [cursor=pointer]
+              - generic [ref=e131] [cursor=pointer]:
+                - img [ref=e132]
+                - generic [ref=e135]: Choose files...
+            - generic [ref=e87]:
+              - generic [ref=e89]:
+                - img [ref=e90]
+                - text: Target
+              - generic [ref=e94]:
+                - button "Connection" [ref=e95] [cursor=pointer]
+                - button "Upload File" [ref=e96] [cursor=pointer]
+              - generic [ref=e124] [cursor=pointer]:
+                - img [ref=e125]
+                - generic [ref=e128]: Choose file...
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e101]:
+                - img [ref=e102]
+                - text: LLM Connection
+              - combobox [ref=e104]:
+                - option "Select LLM..."
+                - option "gemini-ii" [selected]
+                - option "grmini-fixed-again"
+            - generic [ref=e105]:
+              - generic [ref=e107]:
+                - img [ref=e108]
+                - text: Jira Ticket (optional)
+              - textbox "PROJ-123" [ref=e111]
+          - button "Create Project" [disabled] [ref=e113]:
+            - img [ref=e114]
+            - text: Create Project
+        - generic [ref=e51]:
+          - img [ref=e54]
+          - heading "No projects yet" [level=3] [ref=e56]
+          - paragraph [ref=e57]: Create your first mapping project to start discovering schemas and generating data mappings.

@@ -12,8 +12,15 @@ const TABS: { id: TabType; label: string; icon: typeof Database }[] = [
   { id: 'jira', label: 'Jira', icon: Link2 },
 ]
 
-export function ConnectionForm({ onSuccess }: { onSuccess: () => void }) {
-  const [activeTab, setActiveTab] = useState<TabType>('database')
+export function ConnectionForm({ onSuccess, editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
+  const tabFromType = (type: string): TabType => {
+    if (type === 'source' || type === 'target') return 'database'
+    if (type === 'llm') return 'llm'
+    if (type === 'jira') return 'jira'
+    return 'database'
+  }
+
+  const [activeTab, setActiveTab] = useState<TabType>(editingConnection ? tabFromType(editingConnection.connection_type) : 'database')
 
   return (
     <div className="card p-6 animate-slide-up">
@@ -21,15 +28,17 @@ export function ConnectionForm({ onSuccess }: { onSuccess: () => void }) {
         {TABS.map(tab => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
+          const disabled = !!editingConnection
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => !disabled && setActiveTab(tab.id)}
+              disabled={disabled}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? 'text-white'
                   : 'hover:bg-gray-100'
-              }`}
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={isActive ? { backgroundColor: 'var(--accent)' } : { color: 'var(--text-secondary)' }}
             >
               <Icon size={16} />
@@ -39,9 +48,9 @@ export function ConnectionForm({ onSuccess }: { onSuccess: () => void }) {
         })}
       </div>
 
-      {activeTab === 'database' && <DatabaseConnectionForm onSuccess={onSuccess} />}
-      {activeTab === 'llm' && <LLMConnectionForm onSuccess={onSuccess} />}
-      {activeTab === 'jira' && <JiraConnectionForm onSuccess={onSuccess} />}
+      {activeTab === 'database' && <DatabaseConnectionForm onSuccess={onSuccess} editingConnection={editingConnection} />}
+      {activeTab === 'llm' && <LLMConnectionForm onSuccess={onSuccess} editingConnection={editingConnection} />}
+      {activeTab === 'jira' && <JiraConnectionForm onSuccess={onSuccess} editingConnection={editingConnection} />}
     </div>
   )
 }

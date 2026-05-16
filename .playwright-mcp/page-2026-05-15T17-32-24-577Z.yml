@@ -1,0 +1,98 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [active] [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - img [ref=e74]
+            - generic [ref=e78]:
+              - heading "Connections" [level=2] [ref=e79]
+              - paragraph [ref=e80]: Manage database, LLM, and Jira connections
+          - button "Add Connection" [ref=e81] [cursor=pointer]:
+            - img [ref=e82]
+            - text: Add Connection
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - button "All" [ref=e85] [cursor=pointer]
+            - button "Databases" [ref=e86] [cursor=pointer]
+            - button "LLMs" [ref=e87] [cursor=pointer]
+            - button "Jira" [ref=e88] [cursor=pointer]
+          - table [ref=e90]:
+            - rowgroup [ref=e91]:
+              - row "Name Type Flavor Status" [ref=e92]:
+                - columnheader "Name" [ref=e93]
+                - columnheader "Type" [ref=e94]
+                - columnheader "Flavor" [ref=e95]
+                - columnheader "Status" [ref=e96]
+                - columnheader [ref=e97]
+            - rowgroup [ref=e98]:
+              - row "Local PostgreSQL source postgresql Untested" [ref=e99]:
+                - cell "Local PostgreSQL" [ref=e100]
+                - cell "source" [ref=e101]:
+                  - generic [ref=e102]:
+                    - img [ref=e104]
+                    - generic [ref=e108]: source
+                - cell "postgresql" [ref=e109]
+                - cell "Untested" [ref=e110]:
+                  - generic [ref=e111]:
+                    - img [ref=e112]
+                    - text: Untested
+                - cell [ref=e116]:
+                  - button [ref=e118] [cursor=pointer]:
+                    - img [ref=e119]
+              - row "Target PostgreSQL target postgresql Untested" [ref=e122]:
+                - cell "Target PostgreSQL" [ref=e123]
+                - cell "target" [ref=e124]:
+                  - generic [ref=e125]:
+                    - img [ref=e127]
+                    - generic [ref=e131]: target
+                - cell "postgresql" [ref=e132]
+                - cell "Untested" [ref=e133]:
+                  - generic [ref=e134]:
+                    - img [ref=e135]
+                    - text: Untested
+                - cell [ref=e139]:
+                  - button [ref=e141] [cursor=pointer]:
+                    - img [ref=e142]
+              - row "gemini llm gemini Untested" [ref=e145]:
+                - cell "gemini" [ref=e146]
+                - cell "llm" [ref=e147]:
+                  - generic [ref=e148]:
+                    - img [ref=e150]
+                    - generic [ref=e152]: llm
+                - cell "gemini" [ref=e153]
+                - cell "Untested" [ref=e154]:
+                  - generic [ref=e155]:
+                    - img [ref=e156]
+                    - text: Untested
+                - cell [ref=e160]:
+                  - button [ref=e162] [cursor=pointer]:
+                    - img [ref=e163]

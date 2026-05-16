@@ -17,7 +17,7 @@ const DEFAULT_PARAMS: Record<string, Record<string, any>> = {
   parquet: { compression: 'snappy' },
 }
 
-export function DatabaseConnectionForm({ onSuccess }: { onSuccess: () => void }) {
+export function DatabaseConnectionForm({ onSuccess, editingConnection: _editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [connectionType, setConnectionType] = useState('source')

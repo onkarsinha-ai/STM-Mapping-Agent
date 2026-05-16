@@ -1,0 +1,85 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [active] [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+    - link "New Project" [ref=e25] [cursor=pointer]:
+      - /url: /
+      - img [ref=e26]
+      - text: New Project
+  - generic [ref=e27]:
+    - banner [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - generic [ref=e33]: STM Mapping Agent
+        - generic [ref=e34]: v0.1
+      - generic [ref=e35]:
+        - img [ref=e36]
+        - generic [ref=e38]: Local Mode
+    - main [ref=e39]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - img [ref=e85]
+            - generic [ref=e89]:
+              - heading "Connections" [level=2] [ref=e90]
+              - paragraph [ref=e91]: Manage database, LLM, and Jira connections
+          - button "Add Connection" [ref=e92] [cursor=pointer]:
+            - img [ref=e93]
+            - text: Add Connection
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - button "All" [ref=e96] [cursor=pointer]
+            - button "Databases" [ref=e97] [cursor=pointer]
+            - button "LLMs" [ref=e98] [cursor=pointer]
+            - button "Jira" [ref=e99] [cursor=pointer]
+          - table [ref=e101]:
+            - rowgroup [ref=e102]:
+              - row "Name Type Flavor" [ref=e103]:
+                - columnheader "Name" [ref=e104]
+                - columnheader "Type" [ref=e105]
+                - columnheader "Flavor" [ref=e106]
+                - columnheader [ref=e107]
+            - rowgroup [ref=e108]:
+              - row "gemini-ii llm gemini" [ref=e109]:
+                - cell "gemini-ii" [ref=e110]
+                - cell "llm" [ref=e111]:
+                  - generic [ref=e112]:
+                    - img [ref=e114]
+                    - generic [ref=e116]: llm
+                - cell "gemini" [ref=e117]
+                - cell [ref=e118]:
+                  - generic [ref=e119]:
+                    - button "Test connection" [ref=e120] [cursor=pointer]:
+                      - img [ref=e121]
+                    - button [ref=e123] [cursor=pointer]:
+                      - img [ref=e124]
+                    - button "Delete connection" [ref=e127] [cursor=pointer]:
+                      - img [ref=e128]
+              - row "grmini-fixed-again llm gemini" [ref=e131]:
+                - cell "grmini-fixed-again" [ref=e132]
+                - cell "llm" [ref=e133]:
+                  - generic [ref=e134]:
+                    - img [ref=e136]
+                    - generic [ref=e138]: llm
+                - cell "gemini" [ref=e139]
+                - cell [ref=e140]:
+                  - generic [ref=e141]:
+                    - button "Test connection" [ref=e142] [cursor=pointer]:
+                      - img [ref=e143]
+                    - button [ref=e145] [cursor=pointer]:
+                      - img [ref=e146]
+                    - button "Delete connection" [ref=e149] [cursor=pointer]:
+                      - img [ref=e150]
