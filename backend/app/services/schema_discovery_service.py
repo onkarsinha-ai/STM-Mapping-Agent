@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy import text
+from sqlalchemy import text, delete
 from app.database import AsyncSessionLocal
 from app.models.schema_cache import SchemaCache, ObjectType
 
@@ -82,3 +82,38 @@ class SchemaDiscoveryService:
                     "nullable": entry.is_nullable
                 })
             return tree
+
+    @staticmethod
+    async def insert_inline_schema(project_id: str, schema_data: dict, is_target: bool = False) -> List[SchemaCache]:
+        source_name = schema_data.get("source_name", "inline")
+        schema_name = "target" if is_target else source_name
+        table_name = source_name.split(".")[0] if "." in source_name else source_name
+
+        entries = []
+        for col in schema_data.get("columns", []):
+            entry = SchemaCache(
+                connection_id=None,
+                project_id=project_id,
+                object_type=ObjectType.column,
+                schema_name=schema_name,
+                table_name=table_name,
+                column_name=col["name"],
+                data_type=col.get("type", "string"),
+                is_nullable=True
+            )
+            entries.append(entry)
+
+        async with AsyncSessionLocal() as session:
+            for entry in entries:
+                session.add(entry)
+            await session.commit()
+
+        return entries
+
+    @staticmethod
+    async def clear_project_cache(project_id: str) -> None:
+        async with AsyncSessionLocal() as session:
+            await session.execute(
+                delete(SchemaCache).where(SchemaCache.project_id == project_id)
+            )
+            await session.commit()
