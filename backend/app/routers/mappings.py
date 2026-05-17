@@ -1,10 +1,12 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from typing import List, Dict, Any
 
 from app.database import get_db
-from app.models.mapping import Mapping
+from app.models.mapping import Mapping, MappingStatus
 from app.models.project import Project, ProjectPhase
 from app.models.schema_cache import SchemaCache
 from app.services.mapping_engine import MappingEngine
@@ -13,6 +15,8 @@ from app.services.connection_service import ConnectionService
 from app.schemas.mapping import MappingUpdate, MappingResponse
 
 router = APIRouter(prefix="/projects", tags=["mappings"])
+
+logger = logging.getLogger(__name__)
 
 
 @router.get("/{project_id}/mappings", response_model=List[MappingResponse])
@@ -145,10 +149,29 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     if not source_schema and not has_selections:
         source_schema = build_tree(entries)
 
+    # Clear stale proposed mappings before generating new ones
+    await db.execute(
+        delete(Mapping).where(
+            Mapping.project_id == project_id,
+            Mapping.status == MappingStatus.proposed
+        )
+    )
+
     # Build Jira context if available
     jira_context = None
     if project.jira_ticket_key:
         jira_context = project.jira_ticket_key
+
+    logger.info(
+        "Proposing mappings for project=%s: source_schemas=%s target_schemas=%s "
+        "source_tables=%d target_tables=%d target_columns=%d",
+        project_id,
+        list(source_schema.keys()),
+        list(target_schema.keys()),
+        sum(len(t) for t in source_schema.values()),
+        len(target_schema),
+        sum(len(cols) for cols in target_schema.values())
+    )
 
     # Generate proposals via LLM
     try:
