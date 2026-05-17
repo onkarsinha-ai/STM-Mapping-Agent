@@ -10,13 +10,13 @@ class LLMOrchestrator:
     def build_prompt(target_schema: Dict, source_schema: Dict,
                      jira_context: Optional[str], user_text: str,
                      historical_feedback: List[Dict]) -> str:
-        prompt = f"""You are a data mapping expert. Given a target schema and one or more source schemas, propose column mappings.
+        prompt = f"""You are a senior data engineer specializing in schema mapping. Your task is to propose precise column-level mappings from source schemas to a target schema.
 
-## Target Schema
+## Target Schema (ONLY map to these tables/columns)
 {json.dumps(target_schema, indent=2)}
 
-## Source Schemas
-Top-level keys in the source schema are source names (e.g., filenames or database schemas).
+## Source Schemas (ONLY use these tables/columns as sources)
+Top-level keys are database schema names.
 {json.dumps(source_schema, indent=2)}
 
 ## Context
@@ -32,24 +32,68 @@ Top-level keys in the source schema are source names (e.g., filenames or databas
                 prompt += f"- {json.dumps(fb)}\n"
 
         prompt += """
-## Instructions
-For each target column, propose the best source column. Include:
-- source_table, source_column (use the source name as prefix if needed, e.g., "customers.csv.users.first_name")
-- business_logic: why this maps
-- transformation_rule: any SQL/transform needed
-- confidence_score: 0.0-1.0
+## CRITICAL RULES — YOU MUST FOLLOW THESE
+1. ONLY generate mappings for target tables and columns explicitly listed in the Target Schema above.
+2. ONLY use source tables and columns explicitly listed in the Source Schema above.
+3. If a target column has no logical source, set source_table=null and source_column=null.
+4. Do NOT invent tables, columns, or data types that are not present in the schemas.
+5. Every target column MUST appear in the output exactly once.
 
-Output as JSON array with this structure:
+## Mapping Scenario Examples
+
+### Direct Column Mapping
+Target: customers.email
+Source: users.email_address
+Logic: Email addresses were renamed in the target system.
+Transformation: None
+Confidence: 0.95
+
+### Multi-Source / Join Mapping
+Target: users.full_name
+Source: users.first_name, users.last_name
+Logic: Target stores full name; source stores first and last separately.
+Transformation: CONCAT(first_name, ' ', last_name)
+Confidence: 0.90
+
+### Aggregation Mapping
+Target: orders.monthly_total
+Source: order_lines.amount
+Logic: Target aggregates order lines to monthly totals.
+Transformation: SUM(amount) GROUP BY order_id, DATE_TRUNC('month', created_at)
+Confidence: 0.80
+
+### Derived Column / CASE Mapping
+Target: orders.status
+Source: orders.deleted_at
+Logic: Target uses enum status; source uses soft-delete timestamp.
+Transformation: CASE WHEN deleted_at IS NULL THEN 'active' ELSE 'cancelled' END
+Confidence: 0.75
+
+### No Mapping (Generated / Surrogate Key)
+Target: orders.id
+Source: null
+Logic: Target uses auto-increment primary key not present in source.
+Transformation: null
+Confidence: 1.00
+
+## Confidence Scoring Rubric
+- 0.90–1.00: Exact name match + same data type
+- 0.70–0.89: Fuzzy name match or compatible type (e.g., VARCHAR → TEXT)
+- 0.50–0.69: Inferred semantic match or requires transformation
+- < 0.50: Uncertain; only use if no better option exists
+
+## Output Format
+Return a JSON array with one object per TARGET COLUMN. Structure:
 [
   {
-    "target_table": "...",
-    "target_column": "...",
-    "source_table": "...",
-    "source_column": "...",
-    "business_logic": "...",
-    "transformation_rule": "...",
+    "target_table": "schema.table",
+    "target_column": "column_name",
+    "source_table": "schema.table or null",
+    "source_column": "column_name or null",
+    "business_logic": "Why this mapping makes sense",
+    "transformation_rule": "SQL expression or null",
     "confidence_score": 0.95,
-    "reasoning": "..."
+    "reasoning": "Brief explanation of the match logic"
   }
 ]
 """
