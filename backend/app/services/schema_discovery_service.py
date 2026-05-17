@@ -6,9 +6,9 @@ from app.models.schema_cache import SchemaCache, ObjectType
 
 class SchemaDiscoveryService:
     @staticmethod
-    async def discover_schema(connection_id: str, project_id: str, params: Dict[str, Any]) -> List[SchemaCache]:
+    async def discover_schema(connection_id: str, project_id: str, params: Dict[str, Any], is_target: bool = False) -> List[SchemaCache]:
         db_type = params.get("db_type")
-        
+
         if db_type == "postgresql":
             url = f"postgresql+asyncpg://{params['username']}:{params['password']}@{params['host']}:{params['port']}/{params['database']}"
             query = """
@@ -27,15 +27,15 @@ class SchemaDiscoveryService:
             """
         else:
             raise ValueError(f"Unsupported database type: {db_type}")
-        
+
         engine = create_async_engine(url, echo=False)
         entries = []
-        
+
         try:
             async with engine.connect() as conn:
                 result = await conn.execute(text(query))
                 rows = result.mappings().all()
-                
+
                 for row in rows:
                     entry = SchemaCache(
                         connection_id=connection_id,
@@ -46,17 +46,18 @@ class SchemaDiscoveryService:
                         column_name=row["column_name"],
                         data_type=row["data_type"],
                         is_nullable=row["is_nullable"] == "YES",
-                        column_default=str(row["column_default"]) if row["column_default"] else None
+                        column_default=str(row["column_default"]) if row["column_default"] else None,
+                        is_target=is_target
                     )
                     entries.append(entry)
-            
+
             async with AsyncSessionLocal() as session:
                 for entry in entries:
                     session.add(entry)
                 await session.commit()
         finally:
             await engine.dispose()
-        
+
         return entries
 
     @staticmethod
@@ -67,20 +68,40 @@ class SchemaDiscoveryService:
                 select(SchemaCache).where(SchemaCache.project_id == project_id)
             )
             entries = result.scalars().all()
-            
+
             tree = {}
+            seen = set()
             for entry in entries:
                 schema = entry.schema_name or "default"
                 table = entry.table_name or "unknown"
+                col_name = entry.column_name or "unknown"
+                key = (schema, table, col_name)
+
                 if schema not in tree:
                     tree[schema] = {}
                 if table not in tree[schema]:
                     tree[schema][table] = []
-                tree[schema][table].append({
-                    "name": entry.column_name,
-                    "type": entry.data_type,
-                    "nullable": entry.is_nullable
-                })
+
+                if key not in seen:
+                    seen.add(key)
+                    tree[schema][table].append({
+                        "name": entry.column_name,
+                        "type": entry.data_type,
+                        "nullable": entry.is_nullable,
+                        "is_target": entry.is_target
+                    })
+                else:
+                    # If duplicate from same connection discovered as both source and target,
+                    # merge is_target info (None -> False/True, False -> True if also True)
+                    existing = next(
+                        (c for c in tree[schema][table] if c["name"] == col_name),
+                        None
+                    )
+                    if existing and entry.is_target is not None:
+                        if existing.get("is_target") is None:
+                            existing["is_target"] = entry.is_target
+                        elif existing.get("is_target") != entry.is_target:
+                            existing["is_target"] = "both"
             return tree
 
     @staticmethod
@@ -99,7 +120,8 @@ class SchemaDiscoveryService:
                 table_name=table_name,
                 column_name=col["name"],
                 data_type=col.get("type", "string"),
-                is_nullable=col.get("nullable", True)
+                is_nullable=col.get("nullable", True),
+                is_target=is_target
             )
             entries.append(entry)
 

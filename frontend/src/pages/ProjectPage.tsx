@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { projectsApi, discoveryApi, proposeApi } from '../services/api'
 import { SchemaBrowser } from '../components/schema/SchemaBrowser'
+import { TableSelector } from '../components/schema/TableSelector'
 import { MappingTable } from '../components/mappings/MappingTable'
 import { ArrowLeft, FolderOpen, Play, Sparkles, Loader2 } from 'lucide-react'
 
@@ -36,11 +37,31 @@ export function ProjectPage() {
   const phaseIndex = PHASES.indexOf(phase)
 
   const [proposing, setProposing] = useState(false)
+  const [savingSelections, setSavingSelections] = useState(false)
+
+  // Determine if source and target share the same database connection
+  const sameDbConnection = !!(
+    project?.source_connection_id &&
+    project?.target_connection_id &&
+    project.source_connection_id === project.target_connection_id
+  )
+
+  // Fetch table selections when same connection
+  const { data: selectionsData } = useQuery({
+    queryKey: ['table-selections', id],
+    queryFn: () => projectsApi.getTableSelections(id!),
+    enabled: !!id && sameDbConnection
+  })
+
+  const selectedSourceTables = selectionsData?.data?.selected_source_tables || []
+  const selectedTargetTable = selectionsData?.data?.selected_target_tables?.[0] || ''
+  const hasSelections = selectedSourceTables.length > 0 && selectedTargetTable
 
   const handleDiscover = async () => {
     await discoveryApi.discover(id!)
     queryClient.invalidateQueries({ queryKey: ['project', id] })
     queryClient.invalidateQueries({ queryKey: ['schema', id] })
+    queryClient.invalidateQueries({ queryKey: ['table-selections', id] })
   }
 
   const handlePropose = async () => {
@@ -53,6 +74,20 @@ export function ProjectPage() {
       alert(e.response?.data?.detail || 'Failed to generate proposals')
     }
     setProposing(false)
+  }
+
+  const handleSaveSelections = async (sourceTables: string[], targetTable: string) => {
+    setSavingSelections(true)
+    try {
+      await projectsApi.updateTableSelections(id!, {
+        selected_source_tables: sourceTables,
+        selected_target_tables: [targetTable]
+      })
+      queryClient.invalidateQueries({ queryKey: ['table-selections', id] })
+    } catch (e: any) {
+      alert(e.response?.data?.detail || 'Failed to save selections')
+    }
+    setSavingSelections(false)
   }
 
   const handlePhaseChange = async (phase: string) => {
@@ -189,8 +224,9 @@ export function ProjectPage() {
               </span>
               <button
                 onClick={handlePropose}
-                disabled={proposing || Object.keys(schema).length === 0}
+                disabled={proposing || Object.keys(schema).length === 0 || (sameDbConnection && !hasSelections)}
                 className="btn-primary"
+                title={sameDbConnection && !hasSelections ? 'Select source and target tables first' : ''}
               >
                 {proposing ? (
                   <>
@@ -206,6 +242,15 @@ export function ProjectPage() {
               </button>
             </div>
           </div>
+          {sameDbConnection && (
+            <TableSelector
+              schema={schema}
+              initialSourceTables={selectedSourceTables}
+              initialTargetTable={selectedTargetTable}
+              onSave={handleSaveSelections}
+              saving={savingSelections}
+            />
+          )}
           <SchemaBrowser schema={schema} />
         </div>
       )}

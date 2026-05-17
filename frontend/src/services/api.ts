@@ -28,7 +28,10 @@ export const projectsApi = {
   create: (data: any) => api.post('/projects/', data),
   get: (id: string) => api.get(`/projects/${id}`),
   updatePhase: (id: string, phase: string) => api.put(`/projects/${id}/phase`, { phase }),
-  delete: (id: string) => api.delete(`/projects/${id}`)
+  delete: (id: string) => api.delete(`/projects/${id}`),
+  getTableSelections: (id: string) => api.get(`/projects/${id}/table-selections`),
+  updateTableSelections: (id: string, data: { selected_source_tables: string[], selected_target_tables: string[] }) =>
+    api.put(`/projects/${id}/table-selections`, data)
 }
 
 // Discovery APIs

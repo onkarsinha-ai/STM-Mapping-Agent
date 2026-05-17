@@ -27,27 +27,45 @@ async def discover_schema(project_id: str, background_tasks: BackgroundTasks, db
 
     await SchemaDiscoveryService.clear_project_cache(project_id)
 
+    # Determine if source and target are the same database connection
+    same_db_connection = (
+        has_db_source and has_db_target
+        and str(project.source_connection_id) == str(project.target_connection_id)
+    )
+
     if has_inline_source:
         for schema_data in project.source_schemas:
             await SchemaDiscoveryService.insert_inline_schema(project_id, schema_data, is_target=False)
 
     if has_db_source:
         params = await ConnectionService.get_connection_string(str(project.source_connection_id))
-        await SchemaDiscoveryService.discover_schema(
-            str(project.source_connection_id),
-            project_id,
-            params
-        )
+        if same_db_connection:
+            # When source and target share a connection, discover once without tagging.
+            # Table selection (source vs target) will be done by the user post-discovery.
+            await SchemaDiscoveryService.discover_schema(
+                str(project.source_connection_id),
+                project_id,
+                params,
+                is_target=None  # type: ignore[arg-type]
+            )
+        else:
+            await SchemaDiscoveryService.discover_schema(
+                str(project.source_connection_id),
+                project_id,
+                params,
+                is_target=False
+            )
 
     if has_inline_target:
         await SchemaDiscoveryService.insert_inline_schema(project_id, project.target_schema, is_target=True)
 
-    if has_db_target:
+    if has_db_target and not same_db_connection:
         params = await ConnectionService.get_connection_string(str(project.target_connection_id))
         await SchemaDiscoveryService.discover_schema(
             str(project.target_connection_id),
             project_id,
-            params
+            params,
+            is_target=True
         )
 
     project.current_phase = "discovery"

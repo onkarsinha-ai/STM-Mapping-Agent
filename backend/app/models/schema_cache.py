@@ -23,6 +23,7 @@ class SchemaCache(Base):
     data_type = Column(String(255), nullable=True)
     is_nullable = Column(Boolean, nullable=True)
     column_default = Column(Text, nullable=True)
+    is_target = Column(Boolean, nullable=True)
     sample_data = Column(JSON, default=list)
     stats = Column(JSON, default=dict)
     fetched_at = Column(DateTime, default=datetime.utcnow)

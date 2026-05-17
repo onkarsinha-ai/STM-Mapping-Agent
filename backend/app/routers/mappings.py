@@ -58,23 +58,36 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     if not entries:
         raise HTTPException(status_code=400, detail="No schemas discovered yet")
 
+    # Check if source and target are the same connection
+    same_db_connection = (
+        project.source_connection_id is not None
+        and project.target_connection_id is not None
+        and str(project.source_connection_id) == str(project.target_connection_id)
+    )
+
     # Separate target vs source entries
     target_entries: List[SchemaCache] = []
     source_entries: List[SchemaCache] = []
 
     for entry in entries:
-        is_target = False
-        # Inline target: connection_id=None and schema_name="target"
-        if entry.connection_id is None and entry.schema_name == "target":
-            is_target = True
-        # DB target: matches target_connection_id
-        elif project.target_connection_id and str(entry.connection_id) == str(project.target_connection_id):
-            is_target = True
-
-        if is_target:
+        # Use is_target flag when available (source != target case)
+        if entry.is_target is True:
             target_entries.append(entry)
-        else:
+        elif entry.is_target is False:
             source_entries.append(entry)
+        else:
+            # is_target is None — same connection case or inline schemas
+            # Inline target: connection_id=None and schema_name="target"
+            if entry.connection_id is None and entry.schema_name == "target":
+                target_entries.append(entry)
+            elif same_db_connection:
+                # When source and target share a connection, all entries go to
+                # source by default; filtering by user selections happens below.
+                source_entries.append(entry)
+            elif project.target_connection_id and str(entry.connection_id) == str(project.target_connection_id):
+                target_entries.append(entry)
+            else:
+                source_entries.append(entry)
 
     def build_tree(schema_entries: List[SchemaCache]) -> Dict[str, Any]:
         tree: Dict[str, Any] = {}
@@ -92,13 +105,42 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
             })
         return tree
 
-    target_schema = build_tree(target_entries)
-    source_schema = build_tree(source_entries)
-
-    # Fallback: if target couldn't be separated, pass everything as both
-    if not target_schema:
+    # For same-connection projects, build both trees from all entries so that
+    # user table selections can filter each side independently.
+    if same_db_connection:
         target_schema = build_tree(entries)
-    if not source_schema:
+        source_schema = build_tree(entries)
+    else:
+        target_schema = build_tree(target_entries)
+        source_schema = build_tree(source_entries)
+
+    # If same connection and user made table selections, filter schemas by selections
+    has_selections = same_db_connection and (project.selected_source_tables or project.selected_target_tables)
+    if has_selections:
+        selected_sources = set(project.selected_source_tables or [])
+        selected_targets = set(project.selected_target_tables or [])
+
+        def filter_tree(tree: Dict[str, Any], allowed_tables: set) -> Dict[str, Any]:
+            filtered: Dict[str, Any] = {}
+            for schema, tables in tree.items():
+                for table, columns in tables.items():
+                    key = f"{schema}.{table}"
+                    if key in allowed_tables or table in allowed_tables:
+                        if schema not in filtered:
+                            filtered[schema] = {}
+                        filtered[schema][table] = columns
+            return filtered
+
+        if selected_sources:
+            source_schema = filter_tree(source_schema, selected_sources)
+        if selected_targets:
+            target_schema = filter_tree(target_schema, selected_targets)
+
+    # Fallback: if target/source couldn't be separated, pass everything as both.
+    # Skip fallback when user has made explicit table selections for same-connection projects.
+    if not target_schema and not has_selections:
+        target_schema = build_tree(entries)
+    if not source_schema and not has_selections:
         source_schema = build_tree(entries)
 
     # Build Jira context if available

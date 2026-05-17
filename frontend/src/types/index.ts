@@ -1,7 +1,7 @@
 export interface Connection {
   id: string
   name: string
-  connection_type: 'source' | 'target' | 'jira' | 'llm'
+  connection_type: 'source' | 'target' | 'database' | 'jira' | 'llm'
   db_type: string | null
   provider: string | null
   is_tested: boolean
@@ -30,12 +30,15 @@ export interface Mapping {
   llm_reasoning: string | null
 }
 
+export interface SchemaColumn {
+  name: string
+  type: string
+  nullable: boolean
+  is_target?: boolean | string | null
+}
+
 export interface SchemaTree {
   [schema: string]: {
-    [table: string]: Array<{
-      name: string
-      type: string
-      nullable: boolean
-    }>
+    [table: string]: SchemaColumn[]
   }
 }

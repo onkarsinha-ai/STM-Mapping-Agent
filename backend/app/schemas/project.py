@@ -42,7 +42,14 @@ class ProjectResponse(BaseModel):
     target_connection_id: Optional[UUID]
     source_schemas: Optional[List[Dict[str, Any]]] = None
     target_schema: Optional[Dict[str, Any]] = None
+    selected_source_tables: Optional[List[str]] = None
+    selected_target_tables: Optional[List[str]] = None
     review_chat_completed: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class TableSelectionUpdate(BaseModel):
+    selected_source_tables: List[str]
+    selected_target_tables: List[str]

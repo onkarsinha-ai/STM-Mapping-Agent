@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { ChevronRight, ChevronDown, Table2, Columns, Key, Hash, Type } from 'lucide-react'
+import { ChevronRight, ChevronDown, Table2, Columns, Key, Hash, Type, ArrowRight, ArrowLeftRight } from 'lucide-react'
 
 interface Column {
   name: string
   type: string
   nullable: boolean
+  is_target?: boolean | string | null
 }
 
 interface SchemaBrowserProps {
@@ -17,6 +18,30 @@ function getTypeIcon(type: string) {
   if (t.includes('char') || t.includes('text') || t.includes('varchar')) return <Type size={12} />
   if (t.includes('key') || t.includes('uuid') || t.includes('id')) return <Key size={12} />
   return <Columns size={12} />
+}
+
+function getTableRole(columns: Column[]): { role: 'source' | 'target' | 'both' | null, icon: any } {
+  const targets = new Set<boolean | string | null | undefined>()
+  for (const col of columns) {
+    targets.add(col.is_target)
+  }
+  const hasTrue = targets.has(true) || targets.has('both')
+  const hasFalse = targets.has(false) || targets.has('both')
+  const hasNull = targets.has(null) || targets.has(undefined)
+
+  // If all columns have is_target=null/undefined, show no badge (same-connection, unassigned)
+  if (!hasTrue && !hasFalse && hasNull) return { role: null, icon: null }
+
+  if (hasTrue && hasFalse) return { role: 'both', icon: <ArrowLeftRight size={12} /> }
+  if (hasTrue) return { role: 'target', icon: <ArrowRight size={12} /> }
+  if (hasFalse) return { role: 'source', icon: <ArrowLeftRight size={12} className="rotate-180" /> }
+  return { role: null, icon: null }
+}
+
+const ROLE_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+  source: { bg: 'var(--cyan-soft)', text: 'var(--cyan)', label: 'Source' },
+  target: { bg: 'var(--success-soft)', text: 'var(--success)', label: 'Target' },
+  both: { bg: 'var(--warning-soft)', text: 'var(--warning)', label: 'Source + Target' },
 }
 
 export function SchemaBrowser({ schema }: SchemaBrowserProps) {
@@ -82,7 +107,9 @@ export function SchemaBrowser({ schema }: SchemaBrowserProps) {
 
           {expandedSchemas.has(schemaName) && (
             <div>
-              {Object.entries(tables).map(([tableName, columns]) => (
+              {Object.entries(tables).map(([tableName, columns]) => {
+                const { role, icon } = getTableRole(columns)
+                return (
                 <div key={tableName}>
                   <button
                     onClick={() => toggleTable(`${schemaName}.${tableName}`)}
@@ -104,6 +131,18 @@ export function SchemaBrowser({ schema }: SchemaBrowserProps) {
                     <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
                       ({columns.length} columns)
                     </span>
+                    {role && (
+                      <span
+                        className="text-xs px-1.5 py-0.5 rounded ml-auto flex items-center gap-1"
+                        style={{
+                          backgroundColor: ROLE_BADGE[role].bg,
+                          color: ROLE_BADGE[role].text
+                        }}
+                      >
+                        {icon}
+                        {ROLE_BADGE[role].label}
+                      </span>
+                    )}
                   </button>
 
                   {expandedTables.has(`${schemaName}.${tableName}`) && (
@@ -148,7 +187,7 @@ export function SchemaBrowser({ schema }: SchemaBrowserProps) {
                     </div>
                   )}
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

@@ -8,7 +8,7 @@ from app.models.project import Project, ProjectPhase
 from app.models.mapping import Mapping
 from app.models.schema_cache import SchemaCache
 from app.models.jira_context import JiraContext
-from app.schemas.project import ProjectCreate, ProjectResponse
+from app.schemas.project import ProjectCreate, ProjectResponse, TableSelectionUpdate
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -62,6 +62,48 @@ async def update_phase(project_id: str, data: PhaseUpdate, db: AsyncSession = De
     project.current_phase = phase
     await db.commit()
     return {"message": f"Phase updated to {phase.value}"}
+
+
+@router.put("/{project_id}/table-selections")
+async def update_table_selections(
+    project_id: str,
+    data: TableSelectionUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    project = await db.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Validate that source and target use the same connection
+    same_db = (
+        project.source_connection_id is not None
+        and project.target_connection_id is not None
+        and str(project.source_connection_id) == str(project.target_connection_id)
+    )
+    if not same_db:
+        raise HTTPException(status_code=400, detail="Table selections only allowed when source and target share the same connection")
+
+    # Validate at least one source and exactly one target
+    if len(data.selected_target_tables) != 1:
+        raise HTTPException(status_code=400, detail="Exactly one target table must be selected")
+    if len(data.selected_source_tables) == 0:
+        raise HTTPException(status_code=400, detail="At least one source table must be selected")
+
+    project.selected_source_tables = data.selected_source_tables
+    project.selected_target_tables = data.selected_target_tables
+    await db.commit()
+    return {"message": "Table selections updated"}
+
+
+@router.get("/{project_id}/table-selections")
+async def get_table_selections(project_id: str, db: AsyncSession = Depends(get_db)):
+    project = await db.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {
+        "selected_source_tables": project.selected_source_tables or [],
+        "selected_target_tables": project.selected_target_tables or []
+    }
 
 
 @router.delete("/{project_id}")
