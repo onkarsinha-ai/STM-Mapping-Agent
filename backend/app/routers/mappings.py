@@ -159,6 +159,18 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
         )
     )
 
+    # Find target columns that already have approved/rejected/modified mappings
+    # so we don't recreate proposals for them.
+    existing_result = await db.execute(
+        select(Mapping.target_table, Mapping.target_column).where(
+            Mapping.project_id == project_id,
+            Mapping.status != MappingStatus.proposed
+        )
+    )
+    existing_mappings = {
+        (row[0], row[1]) for row in existing_result.all()
+    }
+
     # Build Jira context if available
     jira_context = None
     if project.jira_ticket_key:
@@ -191,8 +203,15 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"LLM proposal failed: {str(e)}")
 
+    skipped = 0
     for mapping in mappings:
+        if (mapping.target_table, mapping.target_column) in existing_mappings:
+            skipped += 1
+            continue
         db.add(mapping)
+
+    if skipped:
+        logger.info("Skipped %d proposals for already-decided target columns", skipped)
 
     # Advance phase
     project.current_phase = ProjectPhase.propose
