@@ -149,7 +149,9 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     if not source_schema and not has_selections:
         source_schema = build_tree(entries)
 
-    # Clear stale proposed mappings before generating new ones
+    # Clear stale proposed mappings before generating new ones.
+    # Commit is deferred to the end of the endpoint so the delete and
+    # phase advance happen atomically.
     await db.execute(
         delete(Mapping).where(
             Mapping.project_id == project_id,
@@ -162,16 +164,19 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
     if project.jira_ticket_key:
         jira_context = project.jira_ticket_key
 
-    logger.info(
-        "Proposing mappings for project=%s: source_schemas=%s target_schemas=%s "
-        "source_tables=%d target_tables=%d target_columns=%d",
-        project_id,
-        list(source_schema.keys()),
-        list(target_schema.keys()),
-        sum(len(t) for t in source_schema.values()),
-        len(target_schema),
-        sum(len(cols) for cols in target_schema.values())
-    )
+    try:
+        logger.info(
+            "Proposing mappings for project=%s: source_schemas=%s target_schemas=%s "
+            "source_tables=%d target_tables=%d target_columns=%d",
+            project_id,
+            list(source_schema.keys()),
+            list(target_schema.keys()),
+            sum(len(t) for t in source_schema.values() if isinstance(t, dict)),
+            len(target_schema),
+            sum(len(cols) for cols in target_schema.values() if isinstance(cols, list))
+        )
+    except Exception:
+        logger.warning("Could not log schema stats for project %s", project_id, exc_info=True)
 
     # Generate proposals via LLM
     try:
