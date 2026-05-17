@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { projectsApi, discoveryApi, proposeApi } from '../services/api'
@@ -56,6 +56,27 @@ export function ProjectPage() {
   const selectedSourceTables = selectionsData?.data?.selected_source_tables || []
   const selectedTargetTable = selectionsData?.data?.selected_target_tables?.[0] || ''
   const hasSelections = selectedSourceTables.length > 0 && selectedTargetTable
+
+  const filteredSchema = useMemo(() => {
+    if (!sameDbConnection || !hasSelections) return schema
+
+    const allowed = new Set([
+      ...selectedSourceTables,
+      selectedTargetTable
+    ].filter(Boolean))
+
+    const filtered: Record<string, Record<string, any>> = {}
+    for (const [schemaName, tables] of Object.entries(schema)) {
+      for (const [tableName, columns] of Object.entries(tables)) {
+        const key = `${schemaName}.${tableName}`
+        if (allowed.has(key)) {
+          if (!filtered[schemaName]) filtered[schemaName] = {}
+          filtered[schemaName][tableName] = columns
+        }
+      }
+    }
+    return filtered
+  }, [schema, sameDbConnection, hasSelections, selectedSourceTables, selectedTargetTable])
 
   const handleDiscover = async () => {
     await discoveryApi.discover(id!)
@@ -251,7 +272,7 @@ export function ProjectPage() {
               saving={savingSelections}
             />
           )}
-          <SchemaBrowser schema={schema} />
+          <SchemaBrowser schema={filteredSchema} />
         </div>
       )}
 
