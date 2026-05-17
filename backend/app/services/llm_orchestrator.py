@@ -185,14 +185,14 @@ Return a JSON array with one object per TARGET COLUMN. Structure:
                 logger.warning("Dropping invalid target mapping: %s.%s", target_table, target_column)
                 continue
 
-            # Validate source exists in filtered schema (unless null for no-mapping case)
-            if source_table is not None and not LLMOrchestrator._is_valid_source(source_table, source_column, source_schema):
+            # Validate source exists in filtered schema (unless null/empty for no-mapping case)
+            if source_table and not LLMOrchestrator._is_valid_source(source_table, source_column, source_schema):
                 logger.warning("Dropping invalid source mapping: %s.%s → %s.%s",
                                source_table, source_column, target_table, target_column)
                 continue
 
-            # Cap confidence at 1.0
-            confidence = min(prop.get("confidence_score", 0.5), 1.0)
+            # Clamp confidence to [0.0, 1.0]
+            confidence = max(0.0, min(prop.get("confidence_score", 0.5), 1.0))
 
             valid_proposals.append({
                 "target_table": target_table,
