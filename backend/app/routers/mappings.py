@@ -115,7 +115,9 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
         source_schema = build_tree(source_entries)
 
     # If same connection and user made table selections, filter schemas by selections
-    has_selections = same_db_connection and (project.selected_source_tables or project.selected_target_tables)
+    has_selections = bool(
+        project.selected_source_tables or project.selected_target_tables
+    )
     if has_selections:
         selected_sources = set(project.selected_source_tables or [])
         selected_targets = set(project.selected_target_tables or [])
@@ -137,7 +139,7 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
             target_schema = filter_tree(target_schema, selected_targets)
 
     # Fallback: if target/source couldn't be separated, pass everything as both.
-    # Skip fallback when user has made explicit table selections for same-connection projects.
+    # Skip fallback when user has made explicit table selections.
     if not target_schema and not has_selections:
         target_schema = build_tree(entries)
     if not source_schema and not has_selections:
