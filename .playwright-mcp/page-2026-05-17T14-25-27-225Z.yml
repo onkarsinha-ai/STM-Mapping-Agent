@@ -1,0 +1,282 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - link "Back to Projects" [ref=e45] [cursor=pointer]:
+            - /url: /
+            - img [ref=e46]
+            - text: Back to Projects
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - generic [ref=e52]:
+              - heading "E2E Test Project" [level=2] [ref=e53]
+              - paragraph [ref=e54]: End-to-end verification project
+        - generic [ref=e56]:
+          - generic [ref=e58]:
+            - button [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+            - generic [ref=e62]: Configure
+          - generic [ref=e65]:
+            - button [ref=e66] [cursor=pointer]:
+              - img [ref=e67]
+            - generic [ref=e69]: Discovery
+          - generic [ref=e72]:
+            - button "3" [ref=e73] [cursor=pointer]:
+              - generic [ref=e74]: "3"
+            - generic [ref=e75]: Propose
+          - generic [ref=e78]:
+            - button "4" [ref=e79] [cursor=pointer]:
+              - generic [ref=e80]: "4"
+            - generic [ref=e81]: Review
+          - generic [ref=e84]:
+            - button "5" [ref=e85]:
+              - generic [ref=e86]: "5"
+            - generic [ref=e87]: Export
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - heading "Review Mappings" [level=3] [ref=e90]
+            - generic [ref=e91]: Review Required
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - img [ref=e95]
+                - button "All9" [ref=e97] [cursor=pointer]
+                - button "Proposed0" [ref=e98] [cursor=pointer]
+                - button "Approved3" [ref=e99] [cursor=pointer]
+                - button "Rejected6" [ref=e100] [cursor=pointer]
+              - generic [ref=e101]:
+                - button "AI Review Assistant" [ref=e102] [cursor=pointer]:
+                  - img [ref=e103]
+                  - text: AI Review Assistant
+                - button "Export Excel" [ref=e105] [cursor=pointer]:
+                  - img [ref=e106]
+                  - text: Export Excel
+            - table [ref=e111]:
+              - rowgroup [ref=e112]:
+                - row "Target Source Logic Confidence Status Actions" [ref=e113]:
+                  - columnheader "Target" [ref=e114] [cursor=pointer]:
+                    - generic [ref=e115]: Target
+                  - columnheader "Source" [ref=e116] [cursor=pointer]:
+                    - generic [ref=e117]: Source
+                  - columnheader "Logic" [ref=e118]
+                  - columnheader "Confidence" [ref=e119] [cursor=pointer]:
+                    - generic [ref=e120]:
+                      - text: Confidence
+                      - img [ref=e332]
+                  - columnheader "Status" [ref=e121] [cursor=pointer]:
+                    - generic [ref=e122]: Status
+                  - columnheader "Actions" [ref=e123]
+              - rowgroup [ref=e124]:
+                - row "total_spend inline total_spend inline - 85% approved" [ref=e125]:
+                  - cell "total_spend inline" [ref=e126]:
+                    - generic [ref=e127]: total_spend
+                    - generic [ref=e128]: inline
+                  - cell "total_spend inline" [ref=e129]:
+                    - generic [ref=e130]:
+                      - generic [ref=e131]: total_spend
+                      - generic [ref=e132]: inline
+                  - cell "-" [ref=e133]:
+                    - generic [ref=e134]: "-"
+                  - cell "85%" [ref=e135]:
+                    - generic [ref=e136]: 85%
+                  - cell "approved" [ref=e137]:
+                    - generic [ref=e138]: approved
+                  - cell [ref=e139]:
+                    - generic [ref=e140]:
+                      - button "Approve" [ref=e141] [cursor=pointer]:
+                        - img [ref=e142]
+                      - button "Reject" [ref=e144] [cursor=pointer]:
+                        - img [ref=e145]
+                - row "customer_id inline customer_id inline - 85% rejected" [ref=e148]:
+                  - cell "customer_id inline" [ref=e149]:
+                    - generic [ref=e150]: customer_id
+                    - generic [ref=e151]: inline
+                  - cell "customer_id inline" [ref=e152]:
+                    - generic [ref=e153]:
+                      - generic [ref=e154]: customer_id
+                      - generic [ref=e155]: inline
+                  - cell "-" [ref=e156]:
+                    - generic [ref=e157]: "-"
+                  - cell "85%" [ref=e158]:
+                    - generic [ref=e159]: 85%
+                  - cell "rejected" [ref=e160]:
+                    - generic [ref=e161]: rejected
+                  - cell [ref=e162]:
+                    - generic [ref=e163]:
+                      - button "Approve" [ref=e164] [cursor=pointer]:
+                        - img [ref=e165]
+                      - button "Reject" [ref=e167] [cursor=pointer]:
+                        - img [ref=e168]
+                - row "total_spend target amount inline The aggregated sum of all order amounts for each customer, representing their total spending. 85% rejected" [ref=e217]:
+                  - cell "total_spend target" [ref=e218]:
+                    - generic [ref=e219]: total_spend
+                    - generic [ref=e220]: target
+                  - cell "amount inline" [ref=e221]:
+                    - generic [ref=e222]:
+                      - generic [ref=e223]: amount
+                      - generic [ref=e224]: inline
+                  - cell "The aggregated sum of all order amounts for each customer, representing their total spending." [ref=e225]:
+                    - generic [ref=e226]: The aggregated sum of all order amounts for each customer, representing their total spending.
+                  - cell "85%" [ref=e227]:
+                    - generic [ref=e228]: 85%
+                  - cell "rejected" [ref=e229]:
+                    - generic [ref=e230]: rejected
+                  - cell [ref=e231]:
+                    - generic [ref=e232]:
+                      - button "Approve" [ref=e233] [cursor=pointer]:
+                        - img [ref=e234]
+                      - button "Reject" [ref=e236] [cursor=pointer]:
+                        - img [ref=e237]
+                - row "full_name inline full_name inline - 85% approved" [ref=e286]:
+                  - cell "full_name inline" [ref=e287]:
+                    - generic [ref=e288]: full_name
+                    - generic [ref=e289]: inline
+                  - cell "full_name inline" [ref=e290]:
+                    - generic [ref=e291]:
+                      - generic [ref=e292]: full_name
+                      - generic [ref=e293]: inline
+                  - cell "-" [ref=e294]:
+                    - generic [ref=e295]: "-"
+                  - cell "85%" [ref=e296]:
+                    - generic [ref=e297]: 85%
+                  - cell "approved" [ref=e298]:
+                    - generic [ref=e299]: approved
+                  - cell [ref=e300]:
+                    - generic [ref=e301]:
+                      - button "Approve" [ref=e302] [cursor=pointer]:
+                        - img [ref=e303]
+                      - button "Reject" [ref=e305] [cursor=pointer]:
+                        - img [ref=e306]
+                - row "total_spend target inline.amount inline Calculate the total amount spent by each customer across all their orders/transactions. 85% rejected" [ref=e309]:
+                  - cell "total_spend target" [ref=e310]:
+                    - generic [ref=e311]: total_spend
+                    - generic [ref=e312]: target
+                  - cell "inline.amount inline" [ref=e313]:
+                    - generic [ref=e314]:
+                      - generic [ref=e315]: inline.amount
+                      - generic [ref=e316]: inline
+                  - cell "Calculate the total amount spent by each customer across all their orders/transactions." [ref=e317]:
+                    - generic [ref=e318]: Calculate the total amount spent by each customer across all their orders/transactions.
+                  - cell "85%" [ref=e319]:
+                    - generic [ref=e320]: 85%
+                  - cell "rejected" [ref=e321]:
+                    - generic [ref=e322]: rejected
+                  - cell [ref=e323]:
+                    - generic [ref=e324]:
+                      - button "Approve" [ref=e325] [cursor=pointer]:
+                        - img [ref=e326]
+                      - button "Reject" [ref=e328] [cursor=pointer]:
+                        - img [ref=e329]
+                - row "full_name target first_name, last_name inline The complete name of the customer, constructed by concatenating their first and last names. 90% rejected" [ref=e194]:
+                  - cell "full_name target" [ref=e195]:
+                    - generic [ref=e196]: full_name
+                    - generic [ref=e197]: target
+                  - cell "first_name, last_name inline" [ref=e198]:
+                    - generic [ref=e199]:
+                      - generic [ref=e200]: first_name, last_name
+                      - generic [ref=e201]: inline
+                  - cell "The complete name of the customer, constructed by concatenating their first and last names." [ref=e202]:
+                    - generic [ref=e203]: The complete name of the customer, constructed by concatenating their first and last names.
+                  - cell "90%" [ref=e204]:
+                    - generic [ref=e205]: 90%
+                  - cell "rejected" [ref=e206]:
+                    - generic [ref=e207]: rejected
+                  - cell [ref=e208]:
+                    - generic [ref=e209]:
+                      - button "Approve" [ref=e210] [cursor=pointer]:
+                        - img [ref=e211]
+                      - button "Reject" [ref=e213] [cursor=pointer]:
+                        - img [ref=e214]
+                - row "full_name target CONCAT(inline.first_name, ' ', inline.last_name) inline Combine the first and last name components to form a single full name. 95% approved" [ref=e263]:
+                  - cell "full_name target" [ref=e264]:
+                    - generic [ref=e265]: full_name
+                    - generic [ref=e266]: target
+                  - cell "CONCAT(inline.first_name, ' ', inline.last_name) inline" [ref=e267]:
+                    - generic [ref=e268]:
+                      - generic [ref=e269]: CONCAT(inline.first_name, ' ', inline.last_name)
+                      - generic [ref=e270]: inline
+                  - cell "Combine the first and last name components to form a single full name." [ref=e271]:
+                    - generic [ref=e272]: Combine the first and last name components to form a single full name.
+                  - cell "95%" [ref=e273]:
+                    - generic [ref=e274]: 95%
+                  - cell "approved" [ref=e275]:
+                    - generic [ref=e276]: approved
+                  - cell [ref=e277]:
+                    - generic [ref=e278]:
+                      - button "Approve" [ref=e279] [cursor=pointer]:
+                        - img [ref=e280]
+                      - button "Reject" [ref=e282] [cursor=pointer]:
+                        - img [ref=e283]
+                - row "customer_id target customer_id inline The unique identifier for a customer, directly mapped from the source customer ID. 100% rejected" [ref=e171]:
+                  - cell "customer_id target" [ref=e172]:
+                    - generic [ref=e173]: customer_id
+                    - generic [ref=e174]: target
+                  - cell "customer_id inline" [ref=e175]:
+                    - generic [ref=e176]:
+                      - generic [ref=e177]: customer_id
+                      - generic [ref=e178]: inline
+                  - cell "The unique identifier for a customer, directly mapped from the source customer ID." [ref=e179]:
+                    - generic [ref=e180]: The unique identifier for a customer, directly mapped from the source customer ID.
+                  - cell "100%" [ref=e181]:
+                    - generic [ref=e182]: 100%
+                  - cell "rejected" [ref=e183]:
+                    - generic [ref=e184]: rejected
+                  - cell [ref=e185]:
+                    - generic [ref=e186]:
+                      - button "Approve" [ref=e187] [cursor=pointer]:
+                        - img [ref=e188]
+                      - button "Reject" [ref=e190] [cursor=pointer]:
+                        - img [ref=e191]
+                - row "customer_id target inline.customer_id inline Direct mapping of the unique identifier for a customer. 100% rejected" [ref=e240]:
+                  - cell "customer_id target" [ref=e241]:
+                    - generic [ref=e242]: customer_id
+                    - generic [ref=e243]: target
+                  - cell "inline.customer_id inline" [ref=e244]:
+                    - generic [ref=e245]:
+                      - generic [ref=e246]: inline.customer_id
+                      - generic [ref=e247]: inline
+                  - cell "Direct mapping of the unique identifier for a customer." [ref=e248]:
+                    - generic [ref=e249]: Direct mapping of the unique identifier for a customer.
+                  - cell "100%" [ref=e250]:
+                    - generic [ref=e251]: 100%
+                  - cell "rejected" [ref=e252]:
+                    - generic [ref=e253]: rejected
+                  - cell [ref=e254]:
+                    - generic [ref=e255]:
+                      - button "Approve" [ref=e256] [cursor=pointer]:
+                        - img [ref=e257]
+                      - button "Reject" [ref=e259] [cursor=pointer]:
+                        - img [ref=e260]

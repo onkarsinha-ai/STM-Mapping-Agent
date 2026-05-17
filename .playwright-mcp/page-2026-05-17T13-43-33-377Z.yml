@@ -1,0 +1,146 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e246]:
+        - generic [ref=e247]:
+          - link "Back to Projects" [ref=e248] [cursor=pointer]:
+            - /url: /
+            - img [ref=e249]
+            - text: Back to Projects
+          - generic [ref=e251]:
+            - img [ref=e253]
+            - generic [ref=e255]:
+              - heading "Test Same-Connection v2" [level=2] [ref=e256]
+              - paragraph [ref=e257]: Testing same connection with fixed filtering
+        - generic [ref=e259]:
+          - generic [ref=e261]:
+            - button [ref=e262] [cursor=pointer]:
+              - img [ref=e263]
+            - generic [ref=e265]: Configure
+          - generic [ref=e268]:
+            - button "2" [ref=e269] [cursor=pointer]:
+              - generic [ref=e270]: "2"
+            - generic [ref=e271]: Discovery
+          - generic [ref=e274]:
+            - button "3" [ref=e275] [cursor=pointer]:
+              - generic [ref=e276]: "3"
+            - generic [ref=e277]: Propose
+          - generic [ref=e280]:
+            - button "4" [ref=e281]:
+              - generic [ref=e282]: "4"
+            - generic [ref=e283]: Review
+          - generic [ref=e286]:
+            - button "5" [ref=e287]:
+              - generic [ref=e288]: "5"
+            - generic [ref=e289]: Export
+        - generic [ref=e290]:
+          - generic [ref=e291]:
+            - heading "Schema Discovery" [level=3] [ref=e292]
+            - generic [ref=e293]:
+              - generic [ref=e294]: Live
+              - button "Generate Proposals" [ref=e295] [cursor=pointer]:
+                - img [ref=e296]
+                - text: Generate Proposals
+          - generic [ref=e298]:
+            - generic [ref=e299]:
+              - img [ref=e301]
+              - generic [ref=e305]:
+                - heading "Select Tables" [level=3] [ref=e306]
+                - paragraph [ref=e307]: Source and target share the same connection. Choose which table is the target and which are sources.
+            - generic [ref=e308]:
+              - generic [ref=e309]:
+                - generic [ref=e310]:
+                  - heading "Source Tables (3 selected)" [level=4] [ref=e311]:
+                    - img [ref=e312]
+                    - text: Source Tables (3 selected)
+                  - button "Select All" [ref=e314] [cursor=pointer]:
+                    - img [ref=e315]
+                    - text: Select All
+                - generic [ref=e317]:
+                  - button "public.alembic_version" [ref=e318] [cursor=pointer]:
+                    - img [ref=e319]
+                    - generic [ref=e321]: public.alembic_version
+                  - button "public.connections" [ref=e322] [cursor=pointer]:
+                    - img [ref=e323]
+                    - generic [ref=e325]: public.connections
+                  - button "public.jira_context" [ref=e326] [cursor=pointer]:
+                    - img [ref=e327]
+                    - generic [ref=e329]: public.jira_context
+                  - button "public.mapping_feedback" [ref=e330] [cursor=pointer]:
+                    - img [ref=e331]
+                    - generic [ref=e333]: public.mapping_feedback
+                  - button "public.mappings" [ref=e334] [cursor=pointer]:
+                    - img [ref=e335]
+                    - generic [ref=e337]: public.mappings
+                  - button "public.projects" [ref=e338] [cursor=pointer]:
+                    - img [ref=e339]
+                    - generic [ref=e341]: public.projects
+                  - button "public.review_chat_messages" [ref=e342] [cursor=pointer]:
+                    - img [ref=e343]
+                    - generic [ref=e345]: public.review_chat_messages
+                  - button "public.schema_cache" [ref=e346] [cursor=pointer]:
+                    - img [ref=e347]
+                    - generic [ref=e349]: public.schema_cache
+                  - button "public.users" [ref=e350] [cursor=pointer]:
+                    - img [ref=e351]
+                    - generic [ref=e353]: public.users
+              - generic [ref=e354]:
+                - heading "Target Table" [level=4] [ref=e355]:
+                  - img [ref=e356]
+                  - text: Target Table
+                - generic [ref=e358]:
+                  - button "public.alembic_version" [ref=e359] [cursor=pointer]:
+                    - generic [ref=e361]: public.alembic_version
+                  - button "public.connections" [ref=e362] [cursor=pointer]:
+                    - generic [ref=e364]: public.connections
+                  - button "public.jira_context" [ref=e365] [cursor=pointer]:
+                    - generic [ref=e367]: public.jira_context
+                  - button "public.mapping_feedback" [ref=e368] [cursor=pointer]:
+                    - generic [ref=e370]: public.mapping_feedback
+                  - button "public.mappings" [ref=e371] [cursor=pointer]:
+                    - generic [ref=e373]: public.mappings
+                  - button "public.projects" [ref=e374] [cursor=pointer]:
+                    - generic [ref=e376]: public.projects
+                  - button "public.review_chat_messages" [ref=e377] [cursor=pointer]:
+                    - generic [ref=e380]: public.review_chat_messages
+                  - button "public.schema_cache" [ref=e381] [cursor=pointer]:
+                    - generic [ref=e383]: public.schema_cache
+                  - button "public.users" [ref=e384] [cursor=pointer]:
+                    - generic [ref=e386]: public.users
+            - button "Save Selections" [ref=e388] [cursor=pointer]
+          - button "public (4 tables)" [ref=e391] [cursor=pointer]:
+            - img [ref=e392]
+            - generic [ref=e394]: public
+            - generic [ref=e395]: (4 tables)
