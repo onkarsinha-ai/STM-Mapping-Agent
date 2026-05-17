@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Check, Database, ArrowRight, AlertCircle, CheckSquare, Square } from 'lucide-react'
+import { Check, Database, ArrowRight, AlertCircle, CheckSquare, Square, Search } from 'lucide-react'
 import type { SchemaTree } from '../../types'
 
 interface TableSelectorProps {
@@ -27,6 +27,13 @@ export function TableSelector({ schema, initialSourceTables, initialTargetTable,
   )
   const [selectedTarget, setSelectedTarget] = useState<string>(initialTargetTable || '')
   const [error, setError] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredTables = useMemo(() => {
+    if (!searchQuery.trim()) return tables
+    const q = searchQuery.toLowerCase()
+    return tables.filter(t => t.key.toLowerCase().includes(q) || t.table.toLowerCase().includes(q))
+  }, [tables, searchQuery])
 
   // Sync with saved selections when they load asynchronously
   useEffect(() => {
@@ -56,18 +63,27 @@ export function TableSelector({ schema, initialSourceTables, initialTargetTable,
     setSelectedSources(next)
   }
 
-  const allSourcesSelected = selectedSources.size === tables.length && tables.length > 0
+  const allSourcesSelected = filteredTables.length > 0 && filteredTables.every(t => selectedSources.has(t.key))
 
   const toggleSelectAllSources = () => {
     setError('')
     if (allSourcesSelected) {
-      // Deselect all, but keep target if it's selected
+      // Deselect all filtered, but keep target if it's selected and not in filtered
       const next = new Set<string>()
+      for (const key of selectedSources) {
+        if (!filteredTables.some(t => t.key === key)) {
+          next.add(key)
+        }
+      }
       if (selectedTarget) next.add(selectedTarget)
       setSelectedSources(next)
     } else {
-      // Select all
-      setSelectedSources(new Set(tables.map(t => t.key)))
+      // Select all filtered
+      const next = new Set(selectedSources)
+      for (const t of filteredTables) {
+        next.add(t.key)
+      }
+      setSelectedSources(next)
     }
   }
 
@@ -118,6 +134,19 @@ export function TableSelector({ schema, initialSourceTables, initialTargetTable,
         </div>
       )}
 
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search tables..."
+          className="w-full pl-9 pr-3 py-2 rounded-lg text-sm bg-white/5 border border-white/10 focus:border-cyan-500/50 focus:outline-none transition-colors"
+          style={{ color: 'var(--text-primary)' }}
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Source Tables */}
         <div>
@@ -136,7 +165,7 @@ export function TableSelector({ schema, initialSourceTables, initialTargetTable,
             </button>
           </div>
           <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
-            {tables.map(({ key, schema: s, table }) => (
+            {filteredTables.map(({ key, schema: s, table }) => (
               <button
                 key={key}
                 onClick={() => toggleSource(key)}
@@ -163,7 +192,7 @@ export function TableSelector({ schema, initialSourceTables, initialTargetTable,
             Target Table
           </h4>
           <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
-            {tables.map(({ key, schema: s, table }) => (
+            {filteredTables.map(({ key, schema: s, table }) => (
               <button
                 key={key}
                 onClick={() => setTarget(key)}

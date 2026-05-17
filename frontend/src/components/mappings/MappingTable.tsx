@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { mappingsApi, exportApi } from '../../services/api'
-import { Check, X, Filter, FileSpreadsheet, Loader2, Sparkles } from 'lucide-react'
+import { Check, X, Filter, FileSpreadsheet, Loader2, Sparkles, ArrowUp, ArrowDown } from 'lucide-react'
 import { ReviewChatDrawer } from './ReviewChatDrawer'
 
 const FILTERS = [
@@ -29,6 +29,42 @@ export function MappingTable({ projectId }: { projectId: string }) {
   const [filter, setFilter] = useState('all')
   const [exporting, setExporting] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [sort, setSort] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null)
+
+  const handleSort = (key: string) => {
+    setSort(prev => {
+      if (prev?.key === key) {
+        return prev.direction === 'asc' ? { key, direction: 'desc' } : null
+      }
+      return { key, direction: 'asc' }
+    })
+  }
+
+  const sortMappings = (mappings: any[]) => {
+    if (!sort) return mappings
+    const { key, direction } = sort
+    const dir = direction === 'asc' ? 1 : -1
+    return [...mappings].sort((a, b) => {
+      let va: string | number = ''
+      let vb: string | number = ''
+      if (key === 'target') {
+        va = `${a.target_table}.${a.target_column}`.toLowerCase()
+        vb = `${b.target_table}.${b.target_column}`.toLowerCase()
+      } else if (key === 'source') {
+        va = a.source_table ? `${a.source_table}.${a.source_column}`.toLowerCase() : ''
+        vb = b.source_table ? `${b.source_table}.${b.source_column}`.toLowerCase() : ''
+      } else if (key === 'confidence') {
+        va = a.confidence_score || 0
+        vb = b.confidence_score || 0
+      } else if (key === 'status') {
+        va = (a.status || '').toLowerCase()
+        vb = (b.status || '').toLowerCase()
+      }
+      if (va < vb) return -1 * dir
+      if (va > vb) return 1 * dir
+      return 0
+    })
+  }
 
   const { data, isLoading } = useQuery({
     queryKey: ['mappings', projectId],
@@ -47,7 +83,9 @@ export function MappingTable({ projectId }: { projectId: string }) {
   }
 
   const mappings = data?.data || []
-  const filtered = filter === 'all' ? mappings : mappings.filter((m: any) => m.status === filter)
+  const filtered = sortMappings(
+    filter === 'all' ? mappings : mappings.filter((m: any) => m.status === filter)
+  )
 
   const handleAction = async (mappingId: string, action: string) => {
     await mappingsApi.update(mappingId, { status: action })
@@ -133,11 +171,39 @@ export function MappingTable({ projectId }: { projectId: string }) {
           <table className="table-dark" style={{ minWidth: '900px' }}>
           <thead>
             <tr>
-              <th>Target</th>
-              <th>Source</th>
+              <th className="cursor-pointer select-none" onClick={() => handleSort('target')}>
+                <span className="inline-flex items-center gap-1">
+                  Target
+                  {sort?.key === 'target' && (
+                    sort.direction === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
+                  )}
+                </span>
+              </th>
+              <th className="cursor-pointer select-none" onClick={() => handleSort('source')}>
+                <span className="inline-flex items-center gap-1">
+                  Source
+                  {sort?.key === 'source' && (
+                    sort.direction === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
+                  )}
+                </span>
+              </th>
               <th>Logic</th>
-              <th className="w-24">Confidence</th>
-              <th className="w-24">Status</th>
+              <th className="w-24 cursor-pointer select-none" onClick={() => handleSort('confidence')}>
+                <span className="inline-flex items-center gap-1">
+                  Confidence
+                  {sort?.key === 'confidence' && (
+                    sort.direction === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
+                  )}
+                </span>
+              </th>
+              <th className="w-24 cursor-pointer select-none" onClick={() => handleSort('status')}>
+                <span className="inline-flex items-center gap-1">
+                  Status
+                  {sort?.key === 'status' && (
+                    sort.direction === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
+                  )}
+                </span>
+              </th>
               <th className="w-20">Actions</th>
             </tr>
           </thead>
@@ -148,21 +214,21 @@ export function MappingTable({ projectId }: { projectId: string }) {
               return (
                 <tr key={mapping.id}>
                   <td>
-                    <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {mapping.target_table}
-                    </div>
-                    <div className="text-xs schema-node" style={{ color: 'var(--cyan)' }}>
+                    <div className="font-medium schema-node" style={{ color: 'var(--text-primary)' }}>
                       {mapping.target_column}
+                    </div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      {mapping.target_table}
                     </div>
                   </td>
                   <td>
                     {mapping.source_table ? (
                       <div>
-                        <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {mapping.source_table}
-                        </div>
-                        <div className="text-xs schema-node" style={{ color: 'var(--cyan)' }}>
+                        <div className="font-medium schema-node" style={{ color: 'var(--text-primary)' }}>
                           {mapping.source_column}
+                        </div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                          {mapping.source_table}
                         </div>
                       </div>
                     ) : (
