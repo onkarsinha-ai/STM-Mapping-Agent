@@ -1,8 +1,11 @@
 import json
+import logging
 from typing import List, Dict, Any, Optional
 import litellm
 from app.database import AsyncSessionLocal
 from app.models.mapping import Mapping, MappingStatus
+
+logger = logging.getLogger(__name__)
 
 
 class LLMOrchestrator:
@@ -119,6 +122,32 @@ Return a JSON array with one object per TARGET COLUMN. Structure:
         return model
 
     @staticmethod
+    def _is_valid_target(target_table: str, target_column: str, target_schema: Dict) -> bool:
+        """Check if target table/column exists in the filtered target schema."""
+        for schema_name, tables in target_schema.items():
+            for table_name, columns in tables.items():
+                full_name = f"{schema_name}.{table_name}"
+                if target_table in (full_name, table_name):
+                    for col in columns:
+                        if col.get("name") == target_column:
+                            return True
+        return False
+
+    @staticmethod
+    def _is_valid_source(source_table: str, source_column: str, source_schema: Dict) -> bool:
+        """Check if source table/column exists in the filtered source schema."""
+        if not source_table or not source_column:
+            return False
+        for schema_name, tables in source_schema.items():
+            for table_name, columns in tables.items():
+                full_name = f"{schema_name}.{table_name}"
+                if source_table in (full_name, table_name):
+                    for col in columns:
+                        if col.get("name") == source_column:
+                            return True
+        return False
+
+    @staticmethod
     async def propose_mappings(project_id: str, target_schema: Dict, source_schema: Dict,
                                llm_config: Dict, jira_context: Optional[str] = None,
                                user_text: str = "", historical_feedback: List[Dict] = []) -> List[Mapping]:
@@ -144,18 +173,53 @@ Return a JSON array with one object per TARGET COLUMN. Structure:
         if isinstance(proposals, dict):
             proposals = proposals.get("mappings", [])
 
-        mappings = []
+        valid_proposals = []
         for prop in proposals:
+            target_table = prop.get("target_table", "")
+            target_column = prop.get("target_column", "")
+            source_table = prop.get("source_table")
+            source_column = prop.get("source_column")
+
+            # Validate target exists in filtered schema
+            if not LLMOrchestrator._is_valid_target(target_table, target_column, target_schema):
+                logger.warning("Dropping invalid target mapping: %s.%s", target_table, target_column)
+                continue
+
+            # Validate source exists in filtered schema (unless null for no-mapping case)
+            if source_table is not None and not LLMOrchestrator._is_valid_source(source_table, source_column, source_schema):
+                logger.warning("Dropping invalid source mapping: %s.%s → %s.%s",
+                               source_table, source_column, target_table, target_column)
+                continue
+
+            # Cap confidence at 1.0
+            confidence = min(prop.get("confidence_score", 0.5), 1.0)
+
+            valid_proposals.append({
+                "target_table": target_table,
+                "target_column": target_column,
+                "source_table": source_table,
+                "source_column": source_column,
+                "business_logic": prop.get("business_logic"),
+                "transformation_rule": prop.get("transformation_rule"),
+                "confidence_score": confidence,
+                "reasoning": prop.get("reasoning"),
+            })
+
+        logger.info("Validated %d proposals out of %d LLM outputs",
+                    len(valid_proposals), len(proposals))
+
+        mappings = []
+        for prop in valid_proposals:
             mapping = Mapping(
                 project_id=project_id,
-                target_table=prop.get("target_table", ""),
-                target_column=prop.get("target_column", ""),
-                source_table=prop.get("source_table"),
-                source_column=prop.get("source_column"),
-                business_logic=prop.get("business_logic"),
-                transformation_rule=prop.get("transformation_rule"),
-                confidence_score=prop.get("confidence_score", 0.5),
-                llm_reasoning=prop.get("reasoning"),
+                target_table=prop["target_table"],
+                target_column=prop["target_column"],
+                source_table=prop["source_table"],
+                source_column=prop["source_column"],
+                business_logic=prop["business_logic"],
+                transformation_rule=prop["transformation_rule"],
+                confidence_score=prop["confidence_score"],
+                llm_reasoning=prop["reasoning"],
                 status=MappingStatus.proposed
             )
             mappings.append(mapping)
