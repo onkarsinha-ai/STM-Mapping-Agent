@@ -180,7 +180,7 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
 
     # Generate proposals via LLM
     try:
-        await LLMOrchestrator.propose_mappings(
+        mappings = await LLMOrchestrator.propose_mappings(
             project_id=str(project_id),
             target_schema=target_schema,
             source_schema=source_schema,
@@ -190,6 +190,9 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
         )
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"LLM proposal failed: {str(e)}")
+
+    for mapping in mappings:
+        db.add(mapping)
 
     # Advance phase
     project.current_phase = ProjectPhase.propose

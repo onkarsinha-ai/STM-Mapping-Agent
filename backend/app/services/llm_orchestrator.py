@@ -2,7 +2,6 @@ import json
 import logging
 from typing import List, Dict, Any, Optional
 import litellm
-from app.database import AsyncSessionLocal
 from app.models.mapping import Mapping, MappingStatus
 
 logger = logging.getLogger(__name__)
@@ -223,10 +222,5 @@ Return a JSON array with one object per TARGET COLUMN. Structure:
                 status=MappingStatus.proposed
             )
             mappings.append(mapping)
-
-        async with AsyncSessionLocal() as session:
-            for mapping in mappings:
-                session.add(mapping)
-            await session.commit()
 
         return mappings

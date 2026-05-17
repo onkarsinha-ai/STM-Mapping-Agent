@@ -20,12 +20,11 @@ async def test_propose_mappings():
         mock_response.choices[0].message.content = '[{"target_table": "dim_customer", "target_column": "customer_id", "source_table": "users", "source_column": "id", "confidence_score": 0.95}]'
         mock_completion.return_value = mock_response
 
-        with patch('app.services.llm_orchestrator.AsyncSessionLocal'):
-            result = await LLMOrchestrator.propose_mappings(
-                "project-id",
-                {"public": {"dim_customer": [{"name": "customer_id", "type": "int"}]}},
-                {"public": {"users": [{"name": "id", "type": "int"}]}},
-                {"api_key": "test-key", "model": "gpt-4"}
-            )
-            assert len(result) == 1
-            assert result[0].target_table == "dim_customer"
+        result = await LLMOrchestrator.propose_mappings(
+            "project-id",
+            {"public": {"dim_customer": [{"name": "customer_id", "type": "int"}]}},
+            {"public": {"users": [{"name": "id", "type": "int"}]}},
+            {"api_key": "test-key", "model": "gpt-4"}
+        )
+        assert len(result) == 1
+        assert result[0].target_table == "dim_customer"
