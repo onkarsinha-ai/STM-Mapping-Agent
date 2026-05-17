@@ -114,7 +114,7 @@ async def propose_mappings(project_id: str, db: AsyncSession = Depends(get_db)):
         target_schema = build_tree(target_entries)
         source_schema = build_tree(source_entries)
 
-    # If same connection and user made table selections, filter schemas by selections
+    # If user made table selections, filter schemas by selections
     has_selections = bool(
         project.selected_source_tables or project.selected_target_tables
     )
