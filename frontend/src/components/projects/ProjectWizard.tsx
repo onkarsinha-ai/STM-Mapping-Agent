@@ -135,8 +135,8 @@ export function ProjectWizard({ onCreated }: { onCreated: () => void }) {
   })
 
   const connections = connectionsData?.data || []
-  const sourceConnections = connections.filter((c: any) => c.connection_type === 'source')
-  const targetConnections = connections.filter((c: any) => c.connection_type === 'target')
+  const sourceConnections = connections.filter((c: any) => c.connection_type === 'source' || c.connection_type === 'database')
+  const targetConnections = connections.filter((c: any) => c.connection_type === 'target' || c.connection_type === 'database')
   const llmConnections = connections.filter((c: any) => c.connection_type === 'llm')
 
   const cancelId = useCallback((id: string) => {

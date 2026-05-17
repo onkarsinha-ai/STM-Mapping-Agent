@@ -1,0 +1,79 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - link "Back to Projects" [ref=e45] [cursor=pointer]:
+            - /url: /
+            - img [ref=e46]
+            - text: Back to Projects
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - generic [ref=e52]:
+              - heading "UI Test Same-Connection" [level=2] [ref=e53]
+              - paragraph [ref=e54]: UI testing
+        - generic [ref=e56]:
+          - generic [ref=e58]:
+            - button [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+            - generic [ref=e62]: Configure
+          - generic [ref=e65]:
+            - button "2" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]: "2"
+            - generic [ref=e68]: Discovery
+          - generic [ref=e71]:
+            - button "3" [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: "3"
+            - generic [ref=e74]: Propose
+          - generic [ref=e77]:
+            - button "4" [ref=e78]:
+              - generic [ref=e79]: "4"
+            - generic [ref=e80]: Review
+          - generic [ref=e83]:
+            - button "5" [ref=e84]:
+              - generic [ref=e85]: "5"
+            - generic [ref=e86]: Export
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - heading "Schema Discovery" [level=3] [ref=e89]
+            - generic [ref=e90]:
+              - generic [ref=e91]: Live
+              - button "Generate Proposals" [disabled] [ref=e92]:
+                - img [ref=e93]
+                - text: Generate Proposals
+          - generic [ref=e95]:
+            - img [ref=e97]
+            - heading "No schema data" [level=3] [ref=e99]
+            - paragraph [ref=e100]: Run schema discovery to populate this view with your database structure.

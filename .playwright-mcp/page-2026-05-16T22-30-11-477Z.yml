@@ -1,0 +1,89 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [active] [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e452]:
+        - generic [ref=e453]:
+          - generic [ref=e454]:
+            - img [ref=e456]
+            - generic [ref=e460]:
+              - heading "Connections" [level=2] [ref=e461]
+              - paragraph [ref=e462]: Manage database, LLM, and Jira connections
+          - button "Add Connection" [ref=e463] [cursor=pointer]:
+            - img [ref=e464]
+            - text: Add Connection
+        - generic [ref=e465]:
+          - generic [ref=e466]:
+            - button "All" [ref=e467] [cursor=pointer]
+            - button "Databases" [ref=e468] [cursor=pointer]
+            - button "LLMs" [ref=e469] [cursor=pointer]
+            - button "Jira" [ref=e470] [cursor=pointer]
+          - table [ref=e472]:
+            - rowgroup [ref=e473]:
+              - row "Name Type Flavor" [ref=e474]:
+                - columnheader "Name" [ref=e475]
+                - columnheader "Type" [ref=e476]
+                - columnheader "Flavor" [ref=e477]
+                - columnheader [ref=e478]
+            - rowgroup [ref=e479]:
+              - row "gemini-ii llm gemini" [ref=e480]:
+                - cell "gemini-ii" [ref=e481]
+                - cell "llm" [ref=e482]:
+                  - generic [ref=e483]:
+                    - img [ref=e485]
+                    - generic [ref=e487]: llm
+                - cell "gemini" [ref=e488]
+                - cell [ref=e489]:
+                  - generic [ref=e490]:
+                    - button "Test connection" [ref=e491] [cursor=pointer]:
+                      - img [ref=e492]
+                    - button [ref=e494] [cursor=pointer]:
+                      - img [ref=e495]
+                    - button "Delete connection" [ref=e498] [cursor=pointer]:
+                      - img [ref=e499]
+              - row "uni database postgresql" [ref=e502]:
+                - cell "uni" [ref=e503]
+                - cell "database" [ref=e504]:
+                  - generic [ref=e505]:
+                    - img [ref=e507]
+                    - generic [ref=e511]: database
+                - cell "postgresql" [ref=e512]
+                - cell [ref=e513]:
+                  - generic [ref=e514]:
+                    - button "Test connection" [ref=e515] [cursor=pointer]:
+                      - img [ref=e516]
+                    - button [ref=e518] [cursor=pointer]:
+                      - img [ref=e519]
+                    - button "Delete connection" [ref=e522] [cursor=pointer]:
+                      - img [ref=e523]

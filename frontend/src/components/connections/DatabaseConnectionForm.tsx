@@ -20,7 +20,7 @@ const DEFAULT_PARAMS: Record<string, Record<string, any>> = {
 export function DatabaseConnectionForm({ onSuccess, editingConnection: _editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [connectionType, setConnectionType] = useState('source')
+  const connectionType = 'database'
   const [dbType, setDbType] = useState('postgresql')
   const [params, setParams] = useState<Record<string, any>>({ ...DEFAULT_PARAMS.postgresql })
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
@@ -85,8 +85,6 @@ export function DatabaseConnectionForm({ onSuccess, editingConnection: _editingC
         type={connectionType}
         onNameChange={setName}
         onDescriptionChange={setDescription}
-        showTypeSelector={true}
-        onTypeChange={setConnectionType}
       />
       <ConnectionSection
         dbType={dbType}

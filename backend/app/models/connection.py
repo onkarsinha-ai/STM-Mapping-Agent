@@ -7,6 +7,7 @@ import enum
 class ConnectionType(str, enum.Enum):
     source = "source"
     target = "target"
+    database = "database"
     jira = "jira"
     llm = "llm"
 

@@ -6,6 +6,7 @@ import { Trash2, Database, Server, Link2, Sparkles, Pencil, Play } from 'lucide-
 const typeIcons: Record<string, React.ReactNode> = {
   source: <Database size={16} style={{ color: 'var(--cyan)' }} />,
   target: <Database size={16} style={{ color: 'var(--success)' }} />,
+  database: <Database size={16} style={{ color: 'var(--accent)' }} />,
   jira: <Link2 size={16} style={{ color: 'var(--warning)' }} />,
   llm: <Sparkles size={16} style={{ color: 'var(--accent)' }} />,
 }
@@ -13,6 +14,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 const typeColors: Record<string, { bg: string }> = {
   source: { bg: 'var(--cyan-soft)' },
   target: { bg: 'var(--success-soft)' },
+  database: { bg: 'var(--accent-soft)' },
   jira: { bg: 'var(--warning-soft)' },
   llm: { bg: 'var(--accent-soft)' },
 }
@@ -44,7 +46,7 @@ function ConnectionListInner({ onDelete, onEdit }: { onDelete: () => void; onEdi
     return filter === 'all'
       ? connections
       : filter === 'database'
-        ? connections.filter((c: any) => c.connection_type === 'source' || c.connection_type === 'target')
+        ? connections.filter((c: any) => c.connection_type === 'source' || c.connection_type === 'target' || c.connection_type === 'database')
         : connections.filter((c: any) => c.connection_type === filter)
   }, [connections, filter])
 

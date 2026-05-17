@@ -13,7 +13,7 @@ class ConnectionTestResult:
 class ConnectionService:
     @staticmethod
     async def test_connection(connection_type: str, provider: Optional[str], params: Dict[str, Any]) -> ConnectionTestResult:
-        if connection_type in ("source", "target"):
+        if connection_type in ("source", "target", "database"):
             from app.services.testers.database_tester import DatabaseTester
             return await DatabaseTester.test(provider or params.get("db_type"), params)
         elif connection_type == "llm":

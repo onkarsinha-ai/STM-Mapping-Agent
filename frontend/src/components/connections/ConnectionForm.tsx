@@ -14,7 +14,7 @@ const TABS: { id: TabType; label: string; icon: typeof Database }[] = [
 
 export function ConnectionForm({ onSuccess, editingConnection }: { onSuccess: () => void; editingConnection?: any }) {
   const tabFromType = (type: string): TabType => {
-    if (type === 'source' || type === 'target') return 'database'
+    if (type === 'source' || type === 'target' || type === 'database') return 'database'
     if (type === 'llm') return 'llm'
     if (type === 'jira') return 'jira'
     return 'database'

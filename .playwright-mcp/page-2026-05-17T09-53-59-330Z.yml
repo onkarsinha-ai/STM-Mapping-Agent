@@ -1,0 +1,228 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e11]:
+        - heading "STM Agent" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Mapping Engine
+    - navigation [ref=e14]:
+      - generic [ref=e15]: Workspace
+      - link "Projects" [ref=e16] [cursor=pointer]:
+        - /url: /
+        - img [ref=e17]
+        - text: Projects
+      - link "Connections" [ref=e19] [cursor=pointer]:
+        - /url: /connections
+        - img [ref=e20]
+        - text: Connections
+      - link "LLM Chat" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - text: LLM Chat
+    - link "New Project" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - text: New Project
+  - generic [ref=e30]:
+    - banner [ref=e31]:
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - generic [ref=e36]: STM Mapping Agent
+        - generic [ref=e37]: v0.1
+      - generic [ref=e38]:
+        - img [ref=e39]
+        - generic [ref=e41]: Local Mode
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e49]:
+              - heading "Projects" [level=2] [ref=e50]
+              - paragraph [ref=e51]: Manage your data mapping projects
+          - button "Cancel" [active] [ref=e217] [cursor=pointer]:
+            - img [ref=e53]
+            - text: Cancel
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - img [ref=e222]
+            - generic [ref=e224]:
+              - heading "New Mapping Project" [level=3] [ref=e225]
+              - paragraph [ref=e226]: Configure source, target, and LLM connections
+          - generic [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: Project Name
+              - textbox "Customer DWH Mapping" [ref=e230]
+            - generic [ref=e231]:
+              - generic [ref=e232]: Description
+              - textbox "Brief description..." [ref=e233]
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - generic [ref=e237]:
+                - img [ref=e238]
+                - text: Source
+              - generic [ref=e242]:
+                - button "Connection" [ref=e243] [cursor=pointer]
+                - button "Upload File(s)" [ref=e244] [cursor=pointer]
+              - combobox [ref=e245]:
+                - option "Select source..." [selected]
+                - option "uni"
+            - generic [ref=e246]:
+              - generic [ref=e248]:
+                - img [ref=e249]
+                - text: Target
+              - generic [ref=e253]:
+                - button "Connection" [ref=e254] [cursor=pointer]
+                - button "Upload File" [ref=e255] [cursor=pointer]
+              - combobox [ref=e256]:
+                - option "Select target..." [selected]
+                - option "uni"
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - generic [ref=e260]:
+                - img [ref=e261]
+                - text: LLM Connection
+              - combobox [ref=e263]:
+                - option "Select LLM..." [selected]
+                - option "gemini-ii"
+            - generic [ref=e264]:
+              - generic [ref=e266]:
+                - img [ref=e267]
+                - text: Jira Ticket (optional)
+              - textbox "PROJ-123" [ref=e270]
+          - button "Create Project" [disabled] [ref=e272]:
+            - img [ref=e273]
+            - text: Create Project
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - link [ref=e57] [cursor=pointer]:
+                - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+                - img [ref=e59]
+              - generic [ref=e61]:
+                - button "Delete project" [ref=e62] [cursor=pointer]:
+                  - img [ref=e63]
+                - link [ref=e66] [cursor=pointer]:
+                  - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+                  - img [ref=e67]
+            - link "E2E Test Project End-to-end verification project" [ref=e69] [cursor=pointer]:
+              - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+              - heading "E2E Test Project" [level=3] [ref=e70]
+              - paragraph [ref=e71]: End-to-end verification project
+            - link "propose active" [ref=e72] [cursor=pointer]:
+              - /url: /projects/2d94aa87-e134-4566-9fbd-f49a48bdee81
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - img [ref=e75]
+                  - generic [ref=e79]: propose
+                - generic [ref=e81]: active
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - link [ref=e84] [cursor=pointer]:
+                - /url: /projects/6dc516f8-52c3-4317-95eb-4feff4867c15
+                - img [ref=e86]
+              - generic [ref=e88]:
+                - button "Delete project" [ref=e89] [cursor=pointer]:
+                  - img [ref=e90]
+                - link [ref=e93] [cursor=pointer]:
+                  - /url: /projects/6dc516f8-52c3-4317-95eb-4feff4867c15
+                  - img [ref=e94]
+            - link "testing No description" [ref=e96] [cursor=pointer]:
+              - /url: /projects/6dc516f8-52c3-4317-95eb-4feff4867c15
+              - heading "testing" [level=3] [ref=e97]
+              - paragraph [ref=e98]: No description
+            - link "propose active" [ref=e99] [cursor=pointer]:
+              - /url: /projects/6dc516f8-52c3-4317-95eb-4feff4867c15
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - img [ref=e102]
+                  - generic [ref=e106]: propose
+                - generic [ref=e108]: active
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - link [ref=e111] [cursor=pointer]:
+                - /url: /projects/d2a0cb77-6d99-4ba8-b1fd-c2a6b7b7fce2
+                - img [ref=e113]
+              - generic [ref=e115]:
+                - button "Delete project" [ref=e116] [cursor=pointer]:
+                  - img [ref=e117]
+                - link [ref=e120] [cursor=pointer]:
+                  - /url: /projects/d2a0cb77-6d99-4ba8-b1fd-c2a6b7b7fce2
+                  - img [ref=e121]
+            - link "UI Test Same-Connection UI testing" [ref=e123] [cursor=pointer]:
+              - /url: /projects/d2a0cb77-6d99-4ba8-b1fd-c2a6b7b7fce2
+              - heading "UI Test Same-Connection" [level=3] [ref=e124]
+              - paragraph [ref=e125]: UI testing
+            - link "discovery active" [ref=e126] [cursor=pointer]:
+              - /url: /projects/d2a0cb77-6d99-4ba8-b1fd-c2a6b7b7fce2
+              - generic [ref=e127]:
+                - generic [ref=e128]:
+                  - img [ref=e129]
+                  - generic [ref=e133]: discovery
+                - generic [ref=e135]: active
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - link [ref=e138] [cursor=pointer]:
+                - /url: /projects/67e5d112-4269-4efd-93e2-3bbad41193aa
+                - img [ref=e140]
+              - generic [ref=e142]:
+                - button "Delete project" [ref=e143] [cursor=pointer]:
+                  - img [ref=e144]
+                - link [ref=e147] [cursor=pointer]:
+                  - /url: /projects/67e5d112-4269-4efd-93e2-3bbad41193aa
+                  - img [ref=e148]
+            - link "n nb No description" [ref=e150] [cursor=pointer]:
+              - /url: /projects/67e5d112-4269-4efd-93e2-3bbad41193aa
+              - heading "n nb" [level=3] [ref=e151]
+              - paragraph [ref=e152]: No description
+            - link "discovery active" [ref=e153] [cursor=pointer]:
+              - /url: /projects/67e5d112-4269-4efd-93e2-3bbad41193aa
+              - generic [ref=e154]:
+                - generic [ref=e155]:
+                  - img [ref=e156]
+                  - generic [ref=e160]: discovery
+                - generic [ref=e162]: active
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - link [ref=e165] [cursor=pointer]:
+                - /url: /projects/723e7692-d0cf-4352-a19e-806978b67634
+                - img [ref=e167]
+              - generic [ref=e169]:
+                - button "Delete project" [ref=e170] [cursor=pointer]:
+                  - img [ref=e171]
+                - link [ref=e174] [cursor=pointer]:
+                  - /url: /projects/723e7692-d0cf-4352-a19e-806978b67634
+                  - img [ref=e175]
+            - link "Test Same-Connection v2 Testing same connection with fixed filtering" [ref=e177] [cursor=pointer]:
+              - /url: /projects/723e7692-d0cf-4352-a19e-806978b67634
+              - heading "Test Same-Connection v2" [level=3] [ref=e178]
+              - paragraph [ref=e179]: Testing same connection with fixed filtering
+            - link "discovery active" [ref=e180] [cursor=pointer]:
+              - /url: /projects/723e7692-d0cf-4352-a19e-806978b67634
+              - generic [ref=e181]:
+                - generic [ref=e182]:
+                  - img [ref=e183]
+                  - generic [ref=e187]: discovery
+                - generic [ref=e189]: active
+          - generic [ref=e190]:
+            - generic [ref=e191]:
+              - link [ref=e192] [cursor=pointer]:
+                - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+                - img [ref=e194]
+              - generic [ref=e196]:
+                - button "Delete project" [ref=e197] [cursor=pointer]:
+                  - img [ref=e198]
+                - link [ref=e201] [cursor=pointer]:
+                  - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+                  - img [ref=e202]
+            - link "Testing No description" [ref=e204] [cursor=pointer]:
+              - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+              - heading "Testing" [level=3] [ref=e205]
+              - paragraph [ref=e206]: No description
+            - link "discovery active" [ref=e207] [cursor=pointer]:
+              - /url: /projects/fce7fd73-3263-48a7-aed6-bcdffe617184
+              - generic [ref=e208]:
+                - generic [ref=e209]:
+                  - img [ref=e210]
+                  - generic [ref=e214]: discovery
+                - generic [ref=e216]: active
